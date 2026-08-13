@@ -1,0 +1,65 @@
+.ideas-main{ max-width: 720px; margin:0 auto; padding: 24px 20px 60px; }
+
+.idea-form{
+  background:#fff; border:1px solid var(--line); border-radius:16px;
+  padding:16px; margin-bottom:22px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.idea-form textarea{
+  font-family:'Inter',sans-serif; font-size:14.5px;
+  border:1px solid var(--line); border-radius:10px;
+  padding:10px 12px; resize:vertical; min-height:70px;
+}
+.idea-form-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.idea-form-row select, .idea-form-row input{
+  font-family:'Inter',sans-serif; font-size:13.5px;
+  border:1px solid var(--line); border-radius:10px;
+  padding:8px 10px; flex:1; min-width:140px;
+}
+.idea-form button{
+  align-self:flex-end;
+  font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;
+  color:#fff; background: var(--navy); border:none;
+  border-radius:10px; padding:10px 18px; cursor:pointer;
+}
+.idea-form button:hover{ background: var(--navy-deep); }
+
+.idea-filters{
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  margin-bottom:16px;
+}
+.idea-filters select, .idea-filters input{
+  font-family:'Inter',sans-serif; font-size:13px;
+  border:1px solid var(--line); border-radius:20px;
+  padding:6px 12px;
+}
+.export-btn{
+  margin-left:auto;
+  font-family:'Poppins',sans-serif; font-weight:700; font-size:12.5px;
+  color: var(--navy); background: var(--teal-soft);
+  border:1px solid var(--teal); border-radius:20px;
+  padding:7px 14px; cursor:pointer; text-decoration:none;
+}
+.export-btn:hover{ background: var(--teal); color:#fff; }
+
+.idea-card{
+  background:#fff; border:1px solid var(--line); border-radius:14px;
+  padding:14px 16px; margin-bottom:12px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.idea-card.done{ opacity:.55; }
+.idea-card.done .idea-text{ text-decoration:line-through; }
+.idea-card input[type=checkbox]{ margin-top:3px; width:18px; height:18px; cursor:pointer; flex-shrink:0; }
+.idea-card-body{ flex:1; min-width:0; }
+.idea-text{ font-size:14.5px; font-weight:600; line-height:1.4; margin-bottom:6px; white-space:pre-wrap; }
+.idea-meta{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; font-size:11px; }
+.idea-project{
+  font-weight:700; color: var(--navy); background: var(--teal-soft);
+  padding:2px 9px; border-radius:20px;
+}
+.idea-tag{ color:#5b7482; background:rgba(10,31,58,0.06); padding:2px 8px; border-radius:20px; }
+.idea-date{ color:#8fa3ab; margin-left:auto; }
+.idea-delete{
+  background:none; border:none; color:var(--danger); font-size:16px;
+  cursor:pointer; flex-shrink:0; padding:2px 4px;
+}

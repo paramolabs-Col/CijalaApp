@@ -1,0 +1,9 @@
+{
+  "name": "Panel de campañas e ideas",
+  "short_name": "Panel",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1f3a",
+  "theme_color": "#0a1f3a",
+  "icons": []
+}

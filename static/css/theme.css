@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --navy: #0a1f3a;
+  --navy-deep: #071527;
+  --teal: #1ec8c2;
+  --teal-soft: #e6f7f6;
+  --gold: #f5b942;
+  --ink: #0b1f2f;
+  --paper: #f7fafb;
+  --line: #d8e6e5;
+  --ok: #21a37e;
+  --danger: #c0392b;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background: var(--paper);
+  font-family:'Inter',sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing:antialiased;
+  padding-bottom: 60px;
+}
+
+h1,h2,h3,.display{font-family:'Poppins',sans-serif;}
+
+/* ---------------- App tabs ---------------- */
+.app-tabs{
+  position: sticky; top:0; z-index: 70;
+  display:flex; gap:0;
+  background: var(--navy-deep);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  height:40px;
+}
+.tab-btn{
+  flex:1; max-width:220px;
+  font-family:'Inter',sans-serif; font-weight:700; font-size:13px;
+  color:#8fa3b5; background:transparent; border:none;
+  padding: 0 10px; cursor:pointer;
+  border-bottom: 3px solid transparent;
+}
+.tab-btn.active{ color:#fff; border-bottom-color: var(--teal); }
+
+/* ---------------- Header genérico (usado por las 3 secciones) ---------------- */
+header{
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+  color:#fff;
+  padding: 32px 24px 26px;
+  position: sticky;
+  top:40px;
+  z-index: 50;
+  box-shadow: 0 6px 24px rgba(7,21,39,0.25);
+}
+.header-inner{max-width: 980px; margin:0 auto;}
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:11px;
+  color: var(--teal);
+  font-weight:700;
+  margin-bottom:6px;
+}
+header h1{font-size: 26px; margin:0 0 4px; font-weight:800; line-height:1.15;}
+.subrange{font-size:13.5px; color:#a9c2d9; margin-bottom:18px;}
+
+.progress-wrap{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.progress-track{
+  flex:1; min-width:180px; height:8px; border-radius:20px;
+  background: rgba(255,255,255,0.12); overflow:hidden;
+}
+.progress-fill{
+  height:100%; width:0%;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  border-radius:20px; transition: width .35s ease;
+}
+.progress-label{font-size:13px; font-weight:600; color:#fff; white-space:nowrap;}
+.sync-label{font-size:11px; color:#8fd0cc; white-space:nowrap;}
+.reset-btn, .logout-btn{
+  font-size:11px; font-weight:700; color:#fff;
+  background: rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:20px; padding:5px 12px; cursor:pointer;
+  text-decoration:none; display:inline-block;
+}
+.reset-btn:hover, .logout-btn:hover{background: rgba(255,255,255,0.18);}
+
+footer{
+  max-width:980px; margin: 10px auto 0; padding: 10px 20px 30px;
+  font-size:12px; color:#7a8f96; text-align:center;
+}
+
+@media (max-width: 640px){
+  header{padding: 22px 16px 20px;}
+  header h1{font-size:21px;}
+}
+
+/* ---------------- Botones pequeños genéricos ---------------- */
+.mini-btn{
+  font-size:11.5px; font-weight:700; border:1px solid var(--line); background:#fff;
+  border-radius:8px; padding:4px 9px; cursor:pointer;
+}
+.mini-btn.danger{ color: var(--danger); }
+
+.toolbar-btn{
+  font-family:'Poppins',sans-serif; font-weight:700; font-size:12px;
+  border-radius:20px; padding:6px 13px; cursor:pointer; border:1px solid var(--line);
+  background:#fff; color: var(--navy);
+}
+.toolbar-btn:hover{ background: var(--teal-soft); }
+.toolbar-btn.danger{ color: var(--danger); border-color:#f3c9c3; }
+.toolbar-btn.danger:hover{ background:#fdecea; }
+.toolbar-btn.primary{ background: var(--navy); color:#fff; border-color: var(--navy); }
+.toolbar-btn.primary:hover{ background: var(--navy-deep); }
+
+.empty-state{ text-align:center; color:#8fa3ab; font-size:13.5px; padding:30px 0; }

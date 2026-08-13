@@ -1,0 +1,32 @@
+<div id="ideasPage">
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">Captura rápida</div>
+      <h1>Ideas y pensamientos</h1>
+      <div class="subrange">Anota en la calle, organiza en casa, exporta para desarrollar</div>
+    </div>
+  </header>
+
+  <main class="ideas-main">
+    <form id="ideaForm" class="idea-form">
+      <textarea id="ideaText" placeholder="Escribe tu idea..." required></textarea>
+      <div class="idea-form-row">
+        <select id="ideaProject">
+          <option value="">Sin proyecto</option>
+        </select>
+        <input id="ideaTags" type="text" placeholder="tags separados por coma">
+      </div>
+      <button type="submit">Guardar idea</button>
+    </form>
+
+    <div class="idea-filters">
+      <select id="filterProject">
+        <option value="">Todos los proyectos</option>
+      </select>
+      <input id="filterTag" type="text" placeholder="filtrar por tag">
+      <a id="exportBtn" class="export-btn" href="/api/ideas/export">⬇ Exportar .md</a>
+    </div>
+
+    <div id="ideasList"></div>
+  </main>
+</div>

@@ -1,0 +1,26 @@
+<div id="vaultPage">
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">Privado · encriptado</div>
+      <h1>Baúl de contraseñas</h1>
+      <div class="subrange">Las contraseñas se guardan encriptadas con una clave maestra del servidor</div>
+    </div>
+  </header>
+
+  <main class="vault-main">
+    <form id="vaultForm" class="vault-form">
+      <div class="vault-form-row">
+        <input id="vName" type="text" placeholder="Nombre (ej: Cuenta Gmail Páramo Labs)" required>
+        <input id="vUsername" type="text" placeholder="Usuario / email">
+      </div>
+      <div class="vault-form-row">
+        <input id="vPassword" type="text" placeholder="Contraseña" required>
+        <input id="vUrl" type="text" placeholder="URL (opcional)">
+      </div>
+      <textarea id="vNotes" placeholder="Notas (opcional)"></textarea>
+      <button type="submit">Guardar en el baúl</button>
+    </form>
+
+    <div id="vaultList"></div>
+  </main>
+</div>

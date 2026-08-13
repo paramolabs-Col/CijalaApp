@@ -1,0 +1,48 @@
+<div id="campaignPage">
+
+  <div class="campaign-toolbar">
+    <select id="campaignSelect"></select>
+    <button class="toolbar-btn" id="newCampaignBtn">+ Nueva campaña</button>
+    <button class="toolbar-btn" id="editCampaignBtn">✎ Editar</button>
+    <button class="toolbar-btn danger" id="deleteCampaignBtn">Eliminar</button>
+    <a class="reset-btn" href="/logout" style="margin-left:auto;background:#eee;color:#5b7482;border-color:var(--line);">Salir</a>
+  </div>
+
+  <form id="newCampaignForm" class="panel-form" hidden>
+    <label class="field-label">Nombre de la campaña</label>
+    <input type="text" id="ncName" placeholder="Ej: DentalSync × Feria Salud Agosto" required>
+    <label class="field-label">Mes / etiqueta</label>
+    <input type="text" id="ncMonth" placeholder="Ej: Agosto 2026">
+    <label class="field-label">Origen</label>
+    <div class="row">
+      <select id="ncSource">
+        <option value="">Vacía (sin días)</option>
+      </select>
+      <input type="number" id="ncShift" placeholder="Desplazar días (+/-)" value="0" style="max-width:170px;">
+    </div>
+    <div class="actions">
+      <button type="button" class="toolbar-btn" id="ncCancel">Cancelar</button>
+      <button type="submit" class="toolbar-btn primary">Crear</button>
+    </div>
+  </form>
+
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow" id="campEyebrow">Plan de publicación</div>
+      <h1 id="campTitle">Cargando…</h1>
+      <div class="subrange" id="campSubrange"></div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">0 / 0 tareas publicadas</div>
+        <span class="sync-label" id="syncLabel">Cargando progreso guardado…</span>
+        <button class="reset-btn" id="resetBtn" title="Borra el progreso guardado de esta campaña">Reiniciar progreso</button>
+      </div>
+      <div class="daydots" id="dayDots"></div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+  <div id="campaignEditor" hidden></div>
+
+  <footer>DentalSync — Software Odontológico · 100% colombiano · El progreso se guarda automáticamente en el servidor.</footer>
+</div>
