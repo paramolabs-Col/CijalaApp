@@ -4,9 +4,11 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     const tab = btn.dataset.tab;
     document.getElementById('campaignPage').style.display = tab === 'campaign' ? '' : 'none';
+    document.getElementById('templatesPage').style.display = tab === 'templates' ? '' : 'none';
     document.getElementById('ideasPage').style.display = tab === 'ideas' ? '' : 'none';
     document.getElementById('vaultPage').style.display = tab === 'vault' ? '' : 'none';
     if (tab === 'ideas') loadIdeas();
     if (tab === 'vault') loadVault();
+    if (tab === 'templates') loadTemplates();
   });
 });

@@ -1,0 +1,29 @@
+<div id="templatesPage">
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">Biblioteca reutilizable</div>
+      <h1>Plantillas de publicación</h1>
+      <div class="subrange">Armá cada tarea una vez (hora + red + texto) y reusala en cualquier campaña</div>
+    </div>
+  </header>
+
+  <main class="templates-main">
+    <form id="templateForm" class="template-form">
+      <div class="template-form-row">
+        <input id="tplTime" type="text" placeholder="Hora (ej: 8:00 a.m.)" required style="max-width:180px;">
+      </div>
+      <div class="platform-checks" id="tplPlatforms">
+        <label><input type="checkbox" value="fb"> Facebook</label>
+        <label><input type="checkbox" value="igfeed"> IG Feed</label>
+        <label><input type="checkbox" value="igstory"> IG Story</label>
+        <label><input type="checkbox" value="wa"> WhatsApp</label>
+        <label><input type="checkbox" value="wadirect"> WhatsApp directo</label>
+      </div>
+      <input id="tplLabel" type="text" placeholder="Título de la tarea (ej: Publicar post de feature)" required>
+      <textarea id="tplDesc" placeholder="Descripción (opcional)"></textarea>
+      <button type="submit">Guardar plantilla</button>
+    </form>
+
+    <div id="templatesList"></div>
+  </main>
+</div>

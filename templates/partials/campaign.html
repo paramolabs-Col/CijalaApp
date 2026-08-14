@@ -10,15 +10,26 @@
 
   <form id="newCampaignForm" class="panel-form" hidden>
     <label class="field-label">Nombre de la campaña</label>
-    <input type="text" id="ncName" placeholder="Ej: DentalSync × Feria Salud Agosto" required>
+    <input type="text" id="ncName" placeholder="Ej: Campaña semana del 17 de agosto" required>
     <label class="field-label">Mes / etiqueta</label>
     <input type="text" id="ncMonth" placeholder="Ej: Agosto 2026">
     <label class="field-label">Origen</label>
+    <select id="ncSource">
+      <option value="">Vacía (arma los días vos, con fecha de inicio + duración)</option>
+    </select>
     <div class="row">
-      <select id="ncSource">
-        <option value="">Vacía (sin días)</option>
+      <label class="field-label" style="align-self:center;">Fecha de inicio</label>
+      <input type="date" id="ncStartDate">
+    </div>
+    <div class="row" id="ncDurationRow">
+      <label class="field-label" style="align-self:center;">Duración</label>
+      <select id="ncDuration">
+        <option value="7">1 semana (7 días)</option>
+        <option value="15">15 días</option>
+        <option value="30">1 mes (30 días)</option>
+        <option value="custom">Personalizada</option>
       </select>
-      <input type="number" id="ncShift" placeholder="Desplazar días (+/-)" value="0" style="max-width:170px;">
+      <input type="number" id="ncDurationCustom" placeholder="# de días" style="max-width:110px;" hidden>
     </div>
     <div class="actions">
       <button type="button" class="toolbar-btn" id="ncCancel">Cancelar</button>

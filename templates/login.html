@@ -7,10 +7,19 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
-  <form method="POST">
+  <form method="POST" autocomplete="on">
     <h1>Acceso al panel</h1>
     {% if error %}<div class="err">{{ error }}</div>{% endif %}
-    <input type="password" name="password" placeholder="Contraseña" autofocus required>
+    <input type="text" name="username" value="panel" autocomplete="username" hidden>
+    <input
+      type="password"
+      name="password"
+      placeholder="Contraseña"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      autocomplete="current-password"
+      autofocus
+      required>
     <button type="submit">Entrar</button>
   </form>
 </body>

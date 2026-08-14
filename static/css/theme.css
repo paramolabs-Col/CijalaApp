@@ -42,6 +42,9 @@ h1,h2,h3,.display{font-family:'Poppins',sans-serif;}
 }
 .tab-btn.active{ color:#fff; border-bottom-color: var(--teal); }
 
+/* Cada página secundaria arranca oculta; tabs.js las muestra al hacer click */
+#templatesPage, #ideasPage, #vaultPage{ display:none; }
+
 /* ---------------- Header genérico (usado por las 3 secciones) ---------------- */
 header{
   background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);

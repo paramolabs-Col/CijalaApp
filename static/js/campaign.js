@@ -222,21 +222,35 @@ document.getElementById("newCampaignBtn").addEventListener("click", () => {
 document.getElementById("ncCancel").addEventListener("click", () => {
   document.getElementById("newCampaignForm").hidden = true;
 });
+document.getElementById("ncSource").addEventListener("change", (e) => {
+  document.getElementById("ncDurationRow").hidden = !!e.target.value;
+});
+document.getElementById("ncDuration").addEventListener("change", (e) => {
+  document.getElementById("ncDurationCustom").hidden = e.target.value !== "custom";
+});
+
 document.getElementById("newCampaignForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = document.getElementById("ncName").value.trim();
   const month = document.getElementById("ncMonth").value.trim();
   const source_id = document.getElementById("ncSource").value;
-  const shift_days = parseInt(document.getElementById("ncShift").value || "0", 10);
+  const start_date = document.getElementById("ncStartDate").value;
+
+  const durationSel = document.getElementById("ncDuration").value;
+  const duration_days = durationSel === "custom"
+    ? parseInt(document.getElementById("ncDurationCustom").value || "0", 10)
+    : parseInt(durationSel, 10);
 
   const res = await fetch("/api/campaigns", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({name, month, source_id, shift_days})
+    body: JSON.stringify({name, month, source_id, start_date, duration_days})
   });
   const created = await res.json();
   document.getElementById("newCampaignForm").reset();
   document.getElementById("newCampaignForm").hidden = true;
+  document.getElementById("ncDurationRow").hidden = false;
+  document.getElementById("ncDurationCustom").hidden = true;
   await loadCampaigns(created.id);
 });
 
@@ -302,7 +316,13 @@ function renderEditor(){
         <button type="button" class="mini-btn danger ed-delday">Eliminar día</button>
       </div>
       <div class="ed-tasks"></div>
-      <button type="button" class="mini-btn ed-addtask">+ Agregar tarea</button>
+      <div class="row" style="align-items:center;">
+        <button type="button" class="mini-btn ed-addtask">+ Agregar tarea en blanco</button>
+        <select class="ed-picktemplate">
+          <option value="">+ Desde plantilla…</option>
+          ${taskTemplates.map(t => `<option value="${t.id}">${t.time ? t.time + " — " : ""}${t.label}</option>`).join("")}
+        </select>
+      </div>
     `;
 
     const tasksBox = dayEl.querySelector(".ed-tasks");
@@ -343,6 +363,17 @@ function renderEditor(){
   wrap.querySelectorAll(".ed-addtask").forEach(btn => btn.addEventListener("click", (e) => {
     const idx = e.target.closest(".day-edit").dataset.idx;
     editingDraft.days[idx].tasks.push({id: null, time:"", platform:[], label:"", desc:""});
+    renderEditor();
+  }));
+  wrap.querySelectorAll(".ed-picktemplate").forEach(sel => sel.addEventListener("change", (e) => {
+    const templateId = e.target.value;
+    if (!templateId) return;
+    const idx = e.target.closest(".day-edit").dataset.idx;
+    const tpl = taskTemplates.find(t => t.id === templateId);
+    if (!tpl) return;
+    editingDraft.days[idx].tasks.push({
+      id: null, time: tpl.time, platform: [...tpl.platform], label: tpl.label, desc: tpl.desc
+    });
     renderEditor();
   }));
 }

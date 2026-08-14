@@ -14,20 +14,24 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/campaign.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/ideas.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/task_templates.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/vault.css') }}">
 </head>
 <body>
 
 <nav class="app-tabs">
   <button class="tab-btn active" data-tab="campaign">📋 Campañas</button>
+  <button class="tab-btn" data-tab="templates">🧩 Plantillas</button>
   <button class="tab-btn" data-tab="ideas">💡 Ideas</button>
   <button class="tab-btn" data-tab="vault">🔒 Baúl</button>
 </nav>
 
+{% include "partials/task_templates.html" %}
 {% include "partials/campaign.html" %}
 {% include "partials/ideas.html" %}
 {% include "partials/vault.html" %}
 
+<script src="{{ url_for('static', filename='js/task_templates.js') }}"></script>
 <script src="{{ url_for('static', filename='js/campaign.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ideas.js') }}"></script>
 <script src="{{ url_for('static', filename='js/vault.js') }}"></script>

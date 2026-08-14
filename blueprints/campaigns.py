@@ -41,6 +41,8 @@ def create_campaign():
     name = (data.get("name") or "").strip()
     month = (data.get("month") or "").strip()
     source_id = data.get("source_id")
+    start_date = (data.get("start_date") or "").strip()
+    duration_days = int(data.get("duration_days") or 0)
     shift_days = int(data.get("shift_days") or 0)
 
     if not name:
@@ -54,6 +56,12 @@ def create_campaign():
             source = next((c for c in campaigns if c["id"] == source_id), None)
             if not source:
                 return jsonify({"error": "campaña origen no encontrada"}), 404
+
+            # si dieron fecha de inicio, se calcula el desplazamiento contra el primer día de la fuente
+            if start_date and source["days"]:
+                first_source_date = datetime.strptime(source["days"][0]["date"], "%Y-%m-%d")
+                shift_days = (datetime.strptime(start_date, "%Y-%m-%d") - first_source_date).days
+
             for day in source["days"]:
                 new_date = datetime.strptime(day["date"], "%Y-%m-%d") + timedelta(days=shift_days)
                 new_tasks = [
@@ -67,6 +75,19 @@ def create_campaign():
                     "fair": day["fair"],
                     "label": day["label"],
                     "tasks": new_tasks,
+                })
+
+        elif start_date and duration_days > 0:
+            # campaña en blanco: genera los días del rango, sin tareas — se llenan en el editor
+            first_day = datetime.strptime(start_date, "%Y-%m-%d")
+            for i in range(duration_days):
+                day_date = first_day + timedelta(days=i)
+                new_days.append({
+                    "date": day_date.strftime("%Y-%m-%d"),
+                    "phase": 1,
+                    "fair": False,
+                    "label": "",
+                    "tasks": [],
                 })
 
         campaign = {
