@@ -86,8 +86,12 @@ async function loadCampaigns(preferId){
   ncSource.innerHTML = `<option value="">Vacía (sin días)</option>` +
     campaigns.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 
-  if (preferId && campaigns.some(c => c.id === preferId)){
-    openCampaign(preferId);
+  let target = preferId;
+  if (!target){
+    try { target = localStorage.getItem('activeCampaignId'); } catch(e) {}
+  }
+  if (target && campaigns.some(c => c.id === target)){
+    openCampaign(target);
   } else {
     renderCampaignList();
   }
@@ -105,6 +109,7 @@ function campaignProgress(c){
 }
 
 function renderCampaignList(){
+  try { localStorage.removeItem('activeCampaignId'); } catch(e) {}
   document.getElementById("campaignListView").hidden = false;
   document.getElementById("campaignDetailView").hidden = true;
 
@@ -119,7 +124,7 @@ function renderCampaignList(){
     const pct = total ? Math.round((checked / total) * 100) : 0;
     const daysCount = (c.days || []).length;
     return `
-      <div class="campaign-card" data-id="${c.id}" style="border-color:${color}">
+      <div class="campaign-card" data-id="${c.id}">
         <div class="camp-card-body">
           <div class="camp-card-name" style="color:${color}"></div>
           <div class="camp-card-meta">${c.month ? c.month + ' · ' : ''}${daysCount} día${daysCount !== 1 ? 's' : ''}</div>
@@ -143,6 +148,7 @@ function renderCampaignList(){
 
 function openCampaign(id){
   currentCampaignId = id;
+  try { localStorage.setItem('activeCampaignId', id); } catch(e) {}
   document.getElementById("campaignListView").hidden = true;
   document.getElementById("campaignDetailView").hidden = false;
   renderCampaign();
