@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi perfil</title>
+<link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+  <form method="POST" autocomplete="on">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Páramo Labs" class="login-logo">
+    <h1>Mi perfil</h1>
+    <input type="text" name="name" placeholder="Nombre completo" value="{{ user.name or '' }}" autofocus>
+    <input type="text" name="role" placeholder="Cargo (ej: CEO de Páramo Labs S.A.S.)" value="{{ user.role or '' }}">
+    <button type="submit">Guardar</button>
+    <div class="alt-link"><a href="{{ url_for('index') }}">← Volver al panel</a></div>
+  </form>
+</body>
+</html>

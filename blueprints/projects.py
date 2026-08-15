@@ -3,9 +3,8 @@ import uuid
 
 from flask import Blueprint, jsonify, request
 
-from auth import login_required
-from paths import DATA_DIR
-from storage import JSONStore
+from auth import current_user_dir, login_required
+from storage import get_store
 
 projects_bp = Blueprint("projects", __name__, url_prefix="/api")
 
@@ -14,15 +13,17 @@ _DEFAULT_PROJECTS = [
     {"id": "paramo-labs", "name": "Páramo Labs"},
 ]
 
-_projects_store = JSONStore(os.path.join(DATA_DIR, "projects.json"), default_factory=lambda: list(_DEFAULT_PROJECTS))
+
+def _projects_store():
+    return get_store(os.path.join(current_user_dir(), "projects.json"), lambda: list(_DEFAULT_PROJECTS))
 
 
 def load_projects():
-    return _projects_store.load()
+    return _projects_store().load()
 
 
 def save_projects(projects):
-    _projects_store.save(projects)
+    _projects_store().save(projects)
 
 
 def slugify(name):
@@ -46,7 +47,8 @@ def create_project():
     if not name:
         return jsonify({"error": "falta el nombre del proyecto"}), 400
 
-    with _projects_store.lock:
+    store = _projects_store()
+    with store.lock:
         projects = load_projects()
         pid = slugify(name)
         if any(p["id"] == pid for p in projects):
@@ -61,7 +63,8 @@ def create_project():
 @projects_bp.route("/projects/<project_id>", methods=["DELETE"])
 @login_required
 def delete_project(project_id):
-    with _projects_store.lock:
+    store = _projects_store()
+    with store.lock:
         projects = load_projects()
         remaining = [p for p in projects if p["id"] != project_id]
         if len(remaining) == len(projects):

@@ -5,14 +5,15 @@ from datetime import datetime
 from cryptography.fernet import Fernet
 from flask import Blueprint, jsonify, request
 
-from auth import login_required
+from auth import current_user_dir, login_required
 from paths import DATA_DIR
-from storage import JSONStore, get_or_create_file_key
+from storage import get_or_create_file_key, get_store
 
 vault_bp = Blueprint("vault", __name__, url_prefix="/api")
 
-_vault_store = JSONStore(os.path.join(DATA_DIR, "vault.json"), default_factory=list)
-
+# Clave de encriptación única del servidor, compartida para todos los usuarios
+# (cada usuario ya tiene su propio archivo vault.json separado; esta clave
+# solo protege el contenido en disco).
 _env_key = os.environ.get("VAULT_KEY", "")
 _FERNET_KEY = _env_key.encode() if _env_key else get_or_create_file_key(
     os.path.join(DATA_DIR, "vault.key"), Fernet.generate_key
@@ -20,12 +21,16 @@ _FERNET_KEY = _env_key.encode() if _env_key else get_or_create_file_key(
 _fernet = Fernet(_FERNET_KEY)
 
 
+def _vault_store():
+    return get_store(os.path.join(current_user_dir(), "vault.json"), list)
+
+
 def load_vault():
-    return _vault_store.load()
+    return _vault_store().load()
 
 
 def save_vault(entries):
-    _vault_store.save(entries)
+    _vault_store().save(entries)
 
 
 def _public_entry(entry):
@@ -62,7 +67,8 @@ def create_vault_entry():
         "updated_at": datetime.now().isoformat(timespec="seconds"),
     }
 
-    with _vault_store.lock:
+    store = _vault_store()
+    with store.lock:
         entries = load_vault()
         entries.append(entry)
         save_vault(entries)
@@ -75,7 +81,8 @@ def create_vault_entry():
 def update_vault_entry(entry_id):
     data = request.get_json(force=True) or {}
 
-    with _vault_store.lock:
+    store = _vault_store()
+    with store.lock:
         entries = load_vault()
         entry = next((e for e in entries if e["id"] == entry_id), None)
         if not entry:
@@ -101,7 +108,8 @@ def update_vault_entry(entry_id):
 @vault_bp.route("/vault/<entry_id>", methods=["DELETE"])
 @login_required
 def delete_vault_entry(entry_id):
-    with _vault_store.lock:
+    store = _vault_store()
+    with store.lock:
         entries = load_vault()
         remaining = [e for e in entries if e["id"] != entry_id]
         if len(remaining) == len(entries):

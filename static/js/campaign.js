@@ -7,18 +7,32 @@ const icons = {
   wadirect: `<svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5a8.4 8.4 0 0 0-7.2 12.7L4 20.5l4.5-1.2A8.4 8.4 0 1 0 12 3.5Z" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 12h7M8.5 9.5h5M8.5 14.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`
 };
 const platformLabel = {fb:"Facebook", igfeed:"IG Feed", igstory:"IG Story", wa:"WhatsApp", wadirect:"WhatsApp directo"};
+const ICON_EDIT = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+const ICON_SAVE = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M5 5h11l3 3v11H5V5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 5v5h7V5M8 20v-6h8v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 const platformOrder = ["fb","igfeed","igstory","wa","wadirect"];
 const dowNames = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 const monthNames = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-const phaseInfo = {
-  1: {title:"Expectativa", tag:"Instalar la pregunta y anunciar la presencia"},
-  2: {title:"Cuenta regresiva", tag:"Mostrar funcionalidades clave y activar la urgencia"},
-  3: {title:"En vivo / cierre", tag:"Cobertura y presión final de cierre"}
-};
+const phaseInfo = {}; // ya no se usa para agrupar (ver weekRangeLabel) — queda vacío por compatibilidad
 
 function dateMeta(iso){
   const dt = new Date(iso + "T00:00:00");
   return { dayNum: String(dt.getDate()), dow: dowNames[dt.getDay()], month: monthNames[dt.getMonth()] };
+}
+
+function weekRangeLabel(days){
+  const first = dateMeta(days[0].date);
+  const last = dateMeta(days[days.length - 1].date);
+  return first.month === last.month
+    ? `${first.dayNum} – ${last.dayNum} de ${last.month}`
+    : `${first.dayNum} de ${first.month} – ${last.dayNum} de ${last.month}`;
+}
+
+function hexToRgba(hex, alpha){
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+  const num = parseInt(full, 16);
+  const r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 let campaigns = [];
@@ -36,7 +50,7 @@ async function loadCampaigns(preferId){
   if (!campaigns.length) return;
 
   const select = document.getElementById("campaignSelect");
-  select.innerHTML = campaigns.map(c => `<option value="${c.id}">${c.name}${c.month ? " · " + c.month : ""}</option>`).join("");
+  select.innerHTML = campaigns.map(c => `<option value="${c.id}" style="color:${c.color||'#0a1f3a'}">● ${c.name}${c.month ? " · " + c.month : ""}</option>`).join("");
 
   const ncSource = document.getElementById("ncSource");
   ncSource.innerHTML = `<option value="">Vacía (sin días)</option>` +
@@ -65,30 +79,38 @@ function taskKey(campaignId, date, taskId){
 
 function renderCampaign(){
   const campaign = currentCampaign();
+  const color = campaign.color || '#0a1f3a';
   const main = document.getElementById("main");
   main.innerHTML = "";
   document.getElementById("campTitle").textContent = campaign.name;
   document.getElementById("campSubrange").textContent = campaign.month || "";
   document.getElementById("campEyebrow").textContent = "Plan de publicación";
+  document.getElementById("campEyebrow").style.color = color;
+  document.getElementById("progressFill").style.background = `linear-gradient(90deg, ${color}, #f5b942)`;
 
   const dotsContainer = document.getElementById("dayDots");
   dotsContainer.innerHTML = "";
 
-  let currentPhase = 0;
-  campaign.days.slice().sort((a,b) => a.date < b.date ? -1 : 1).forEach(day => {
-    if (day.phase !== currentPhase){
-      currentPhase = day.phase;
+  const sortedDays = campaign.days.slice().sort((a, b) => a.date < b.date ? -1 : 1);
+  const showWeeks = sortedDays.length > 7;
+
+  sortedDays.forEach((day, i) => {
+    if (showWeeks && i % 7 === 0){
+      const weekDays = sortedDays.slice(i, i + 7);
+      const weekNum = Math.floor(i / 7) + 1;
       const h = document.createElement("div");
-      h.className = "phase-heading";
-      const info = phaseInfo[currentPhase] || {title:"Fase "+currentPhase, tag:""};
-      h.innerHTML = `<span class="num">FASE ${currentPhase}</span><h2>${info.title}</h2><span class="tag">${info.tag}</span>`;
+      h.className = "week-heading";
+      h.innerHTML = `<span class="num" style="background:${color}">SEMANA ${weekNum}</span><h2>${weekRangeLabel(weekDays)}</h2>`;
       main.appendChild(h);
     }
 
     const meta = dateMeta(day.date);
+    const accent = day.fair ? "#f5b942" : color;
     const card = document.createElement("div");
-    card.className = `day phase${day.phase}`;
+    card.className = `day${day.fair ? ' fair' : ''}`;
     card.id = `day-${day.date}`;
+    card.style.setProperty('--day-color', accent);
+    card.style.setProperty('--day-color-soft', hexToRgba(accent, 0.14));
 
     const head = document.createElement("div");
     head.className = "day-head";
@@ -134,7 +156,9 @@ function renderCampaign(){
     main.appendChild(card);
 
     const dot = document.createElement("div");
-    dot.className = `daydot p${day.phase}${day.fair ? ' fair' : ''}`;
+    dot.className = `daydot${day.fair ? ' fair' : ''}`;
+    dot.style.borderColor = accent;
+    if (day.fair) dot.style.background = accent;
     dot.textContent = meta.dayNum;
     dot.title = `${meta.dow} ${meta.dayNum} — ${day.label}`;
     dot.onclick = () => document.getElementById(`day-${day.date}`).scrollIntoView({behavior:"smooth", block:"start"});
@@ -218,15 +242,10 @@ document.getElementById("campaignSelect").addEventListener("change", (e) => {
 /* ---------------- Nueva campaña ---------------- */
 document.getElementById("newCampaignBtn").addEventListener("click", () => {
   document.getElementById("newCampaignForm").hidden = false;
+  resetRange();
 });
 document.getElementById("ncCancel").addEventListener("click", () => {
   document.getElementById("newCampaignForm").hidden = true;
-});
-document.getElementById("ncSource").addEventListener("change", (e) => {
-  document.getElementById("ncDurationRow").hidden = !!e.target.value;
-});
-document.getElementById("ncDuration").addEventListener("change", (e) => {
-  document.getElementById("ncDurationCustom").hidden = e.target.value !== "custom";
 });
 
 document.getElementById("newCampaignForm").addEventListener("submit", async (e) => {
@@ -234,12 +253,13 @@ document.getElementById("newCampaignForm").addEventListener("submit", async (e) 
   const name = document.getElementById("ncName").value.trim();
   const month = document.getElementById("ncMonth").value.trim();
   const source_id = document.getElementById("ncSource").value;
-  const start_date = document.getElementById("ncStartDate").value;
+  const start_date = getRangeStartISO();
+  const duration_days = getRangeDurationDays();
 
-  const durationSel = document.getElementById("ncDuration").value;
-  const duration_days = durationSel === "custom"
-    ? parseInt(document.getElementById("ncDurationCustom").value || "0", 10)
-    : parseInt(durationSel, 10);
+  if (!start_date) {
+    alert("Elegí al menos el día de inicio en el calendario.");
+    return;
+  }
 
   const res = await fetch("/api/campaigns", {
     method: "POST",
@@ -249,8 +269,6 @@ document.getElementById("newCampaignForm").addEventListener("submit", async (e) 
   const created = await res.json();
   document.getElementById("newCampaignForm").reset();
   document.getElementById("newCampaignForm").hidden = true;
-  document.getElementById("ncDurationRow").hidden = false;
-  document.getElementById("ncDurationCustom").hidden = true;
   await loadCampaigns(created.id);
 });
 
@@ -268,7 +286,7 @@ function enterEditMode(){
   document.getElementById("main").hidden = true;
   document.getElementById("dayDots").hidden = true;
   document.getElementById("campaignEditor").hidden = false;
-  document.getElementById("editCampaignBtn").textContent = "Guardar cambios";
+  document.getElementById("editCampaignBtn").innerHTML = ICON_SAVE + "Guardar cambios";
   document.getElementById("editCampaignBtn").classList.add("primary");
   renderEditor();
 }
@@ -278,7 +296,7 @@ function exitEditMode(){
   document.getElementById("main").hidden = false;
   document.getElementById("dayDots").hidden = false;
   document.getElementById("campaignEditor").hidden = true;
-  document.getElementById("editCampaignBtn").textContent = "✎ Editar";
+  document.getElementById("editCampaignBtn").innerHTML = ICON_EDIT + "Editar";
   document.getElementById("editCampaignBtn").classList.remove("primary");
 }
 
@@ -294,6 +312,8 @@ function renderEditor(){
     <input type="text" id="edName" value="${editingDraft.name.replace(/"/g,'&quot;')}">
     <label class="field-label">Mes / etiqueta</label>
     <input type="text" id="edMonth" value="${(editingDraft.month||'').replace(/"/g,'&quot;')}">
+    <label class="field-label">Color de la campaña</label>
+    <input type="color" id="edColor" value="${editingDraft.color || '#0a1f3a'}" style="width:60px;height:36px;padding:2px;border-radius:8px;">
   `;
   wrap.appendChild(meta);
 
@@ -306,11 +326,6 @@ function renderEditor(){
     dayEl.innerHTML = `
       <div class="day-edit-head">
         <input type="date" class="ed-date" value="${day.date}">
-        <select class="ed-phase">
-          <option value="1" ${day.phase==1?'selected':''}>Fase 1</option>
-          <option value="2" ${day.phase==2?'selected':''}>Fase 2</option>
-          <option value="3" ${day.phase==3?'selected':''}>Fase 3</option>
-        </select>
         <label><input type="checkbox" class="ed-fair" ${day.fair?'checked':''}> Evento</label>
         <input type="text" class="ed-label" placeholder="Descripción del día" value="${day.label.replace(/"/g,'&quot;')}">
         <button type="button" class="mini-btn danger ed-delday">Eliminar día</button>
@@ -321,6 +336,10 @@ function renderEditor(){
         <select class="ed-picktemplate">
           <option value="">+ Desde plantilla…</option>
           ${taskTemplates.map(t => `<option value="${t.id}">${t.time ? t.time + " — " : ""}${t.label}</option>`).join("")}
+        </select>
+        <select class="ed-pickdaytemplate">
+          <option value="">+ Aplicar combo de día…</option>
+          ${dayTemplates.map(dt => `<option value="${dt.id}">${dt.name} (${dt.tasks.length})</option>`).join("")}
         </select>
       </div>
     `;
@@ -346,9 +365,6 @@ function renderEditor(){
   wrap.querySelectorAll(".ed-date").forEach(inp => inp.addEventListener("change", (e) => {
     editingDraft.days[e.target.closest(".day-edit").dataset.idx].date = e.target.value;
   }));
-  wrap.querySelectorAll(".ed-phase").forEach(inp => inp.addEventListener("change", (e) => {
-    editingDraft.days[e.target.closest(".day-edit").dataset.idx].phase = parseInt(e.target.value, 10);
-  }));
   wrap.querySelectorAll(".ed-fair").forEach(inp => inp.addEventListener("change", (e) => {
     editingDraft.days[e.target.closest(".day-edit").dataset.idx].fair = e.target.checked;
   }));
@@ -373,6 +389,19 @@ function renderEditor(){
     if (!tpl) return;
     editingDraft.days[idx].tasks.push({
       id: null, time: tpl.time, platform: [...tpl.platform], label: tpl.label, desc: tpl.desc
+    });
+    renderEditor();
+  }));
+  wrap.querySelectorAll(".ed-pickdaytemplate").forEach(sel => sel.addEventListener("change", (e) => {
+    const dtId = e.target.value;
+    if (!dtId) return;
+    const idx = e.target.closest(".day-edit").dataset.idx;
+    const dayTpl = dayTemplates.find(d => d.id === dtId);
+    if (!dayTpl) return;
+    dayTpl.tasks.forEach(t => {
+      editingDraft.days[idx].tasks.push({
+        id: null, time: t.time, platform: [...t.platform], label: t.label, desc: t.desc
+      });
     });
     renderEditor();
   }));
@@ -426,11 +455,12 @@ document.getElementById("editCampaignBtn").addEventListener("click", async () =>
   }
   editingDraft.name = document.getElementById("edName").value.trim() || editingDraft.name;
   editingDraft.month = document.getElementById("edMonth").value.trim();
+  editingDraft.color = document.getElementById("edColor").value;
 
   const res = await fetch(`/api/campaigns/${editingDraft.id}`, {
     method: "PUT",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({name: editingDraft.name, month: editingDraft.month, days: editingDraft.days})
+    body: JSON.stringify({name: editingDraft.name, month: editingDraft.month, color: editingDraft.color, days: editingDraft.days})
   });
   await res.json();
   exitEditMode();

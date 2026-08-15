@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuarios — Páramo Labs</title>
+<link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+<style>
+  .admin-wrap{ max-width:640px; margin:40px auto; padding:0 20px; }
+  .admin-wrap a{ color: var(--navy); }
+  .user-row{
+    background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:12px 16px; margin-bottom:10px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .user-email{ font-weight:600; flex:1; }
+  .user-status{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; }
+  .user-status.pending{ background:#fdf3d8; color:#8a6d1a; }
+  .user-status.approved{ background: var(--teal-soft); color: var(--navy); }
+  .user-row form{ margin:0; }
+</style>
+</head>
+<body>
+<div class="admin-wrap">
+  <h1 style="font-family:'Poppins',sans-serif; font-size:22px;">Usuarios</h1>
+  <p><a href="{{ url_for('index') }}">← Volver al panel</a></p>
+
+  {% if not users %}
+    <p>Sin usuarios todavía.</p>
+  {% endif %}
+
+  {% for u in users %}
+    <div class="user-row">
+      <span class="user-email">{{ u.email }}{% if u.is_admin %} (admin){% endif %}</span>
+      <span class="user-status {{ u.status }}">{{ 'Pendiente' if u.status == 'pending' else 'Aprobado' }}</span>
+      {% if u.status == 'pending' %}
+        <form method="POST" action="{{ url_for('users_admin.approve_user', user_id=u.id) }}">
+          <button type="submit" class="toolbar-btn primary">Aprobar</button>
+        </form>
+        <form method="POST" action="{{ url_for('users_admin.reject_user', user_id=u.id) }}" onsubmit="return confirm('¿Rechazar y eliminar esta solicitud?');">
+          <button type="submit" class="toolbar-btn danger">Rechazar</button>
+        </form>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+</body>
+</html>

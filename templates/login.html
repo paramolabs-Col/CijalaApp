@@ -4,23 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acceso</title>
+<link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
   <form method="POST" autocomplete="on">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Páramo Labs" class="login-logo">
     <h1>Acceso al panel</h1>
     {% if error %}<div class="err">{{ error }}</div>{% endif %}
-    <input type="text" name="username" value="panel" autocomplete="username" hidden>
+    <input type="email" name="email" placeholder="Email" autocomplete="username" autofocus required>
     <input
-      type="password"
+      type="tel"
       name="password"
       placeholder="Contraseña"
       inputmode="numeric"
       pattern="[0-9]*"
       autocomplete="current-password"
-      autofocus
+      class="numeric-mask"
       required>
     <button type="submit">Entrar</button>
+    <div class="alt-link"><a href="{{ url_for('auth.register') }}">Crear una cuenta</a></div>
   </form>
 </body>
 </html>

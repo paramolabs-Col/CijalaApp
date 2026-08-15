@@ -4,27 +4,36 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
 
-from auth import login_required
-from paths import DATA_DIR
+from auth import current_user_dir, login_required
 from seed_campaigns import seed_campaigns
-from storage import JSONStore
+from storage import get_store
 
 campaigns_bp = Blueprint("campaigns", __name__, url_prefix="/api")
 
-_campaigns_store = JSONStore(os.path.join(DATA_DIR, "campaigns.json"), default_factory=list)
-_state_store = JSONStore(os.path.join(DATA_DIR, "state.json"), default_factory=dict)
+# Paleta rotativa para diferenciar campañas visualmente — se asigna sola al crear,
+# editable después desde el editor.
+PALETTE = ["#00fbf1", "#00b8b0", "#e8735c", "#8b6fd1", "#3fa66e", "#4a90d9", "#d16fa0", "#6b7f94"]
+
+
+def _campaigns_store():
+    return get_store(os.path.join(current_user_dir(), "campaigns.json"), list)
+
+
+def _state_store():
+    return get_store(os.path.join(current_user_dir(), "state.json"), dict)
 
 
 def load_campaigns():
-    campaigns = _campaigns_store.load()
+    store = _campaigns_store()
+    campaigns = store.load()
     if not campaigns:
         campaigns = seed_campaigns()
-        _campaigns_store.save(campaigns)
+        store.save(campaigns)
     return campaigns
 
 
 def save_campaigns(campaigns):
-    _campaigns_store.save(campaigns)
+    _campaigns_store().save(campaigns)
 
 
 # ---------------- Campañas ----------------
@@ -48,7 +57,8 @@ def create_campaign():
     if not name:
         return jsonify({"error": "falta el nombre de la campaña"}), 400
 
-    with _campaigns_store.lock:
+    store = _campaigns_store()
+    with store.lock:
         campaigns = load_campaigns()
         new_days = []
 
@@ -57,7 +67,6 @@ def create_campaign():
             if not source:
                 return jsonify({"error": "campaña origen no encontrada"}), 404
 
-            # si dieron fecha de inicio, se calcula el desplazamiento contra el primer día de la fuente
             if start_date and source["days"]:
                 first_source_date = datetime.strptime(source["days"][0]["date"], "%Y-%m-%d")
                 shift_days = (datetime.strptime(start_date, "%Y-%m-%d") - first_source_date).days
@@ -78,7 +87,6 @@ def create_campaign():
                 })
 
         elif start_date and duration_days > 0:
-            # campaña en blanco: genera los días del rango, sin tareas — se llenan en el editor
             first_day = datetime.strptime(start_date, "%Y-%m-%d")
             for i in range(duration_days):
                 day_date = first_day + timedelta(days=i)
@@ -94,6 +102,7 @@ def create_campaign():
             "id": uuid.uuid4().hex[:10],
             "name": name,
             "month": month,
+            "color": (data.get("color") or "").strip() or PALETTE[len(campaigns) % len(PALETTE)],
             "days": new_days,
         }
         campaigns.append(campaign)
@@ -107,7 +116,8 @@ def create_campaign():
 def update_campaign(campaign_id):
     data = request.get_json(force=True) or {}
 
-    with _campaigns_store.lock:
+    store = _campaigns_store()
+    with store.lock:
         campaigns = load_campaigns()
         campaign = next((c for c in campaigns if c["id"] == campaign_id), None)
         if not campaign:
@@ -117,6 +127,8 @@ def update_campaign(campaign_id):
             campaign["name"] = (data.get("name") or "").strip() or campaign["name"]
         if "month" in data:
             campaign["month"] = (data.get("month") or "").strip()
+        if "color" in data:
+            campaign["color"] = (data.get("color") or "").strip() or campaign.get("color", PALETTE[0])
         if "days" in data:
             clean_days = []
             for day in data["days"] or []:
@@ -147,7 +159,8 @@ def update_campaign(campaign_id):
 @campaigns_bp.route("/campaigns/<campaign_id>", methods=["DELETE"])
 @login_required
 def delete_campaign(campaign_id):
-    with _campaigns_store.lock:
+    store = _campaigns_store()
+    with store.lock:
         campaigns = load_campaigns()
         remaining = [c for c in campaigns if c["id"] != campaign_id]
         if len(remaining) == len(campaigns):
@@ -161,7 +174,7 @@ def delete_campaign(campaign_id):
 @campaigns_bp.route("/state", methods=["GET"])
 @login_required
 def get_state():
-    return jsonify(_state_store.load())
+    return jsonify(_state_store().load())
 
 
 @campaigns_bp.route("/toggle", methods=["POST"])
@@ -174,10 +187,11 @@ def toggle():
     if not task_id:
         return jsonify({"error": "falta el id de la tarea"}), 400
 
-    with _state_store.lock:
-        state = _state_store.load()
+    store = _state_store()
+    with store.lock:
+        state = store.load()
         state[task_id] = checked
-        _state_store.save(state)
+        store.save(state)
 
     return jsonify({"ok": True, "id": task_id, "checked": checked})
 
@@ -188,12 +202,13 @@ def reset():
     data = request.get_json(silent=True) or {}
     campaign_id = data.get("campaign_id")
 
-    with _state_store.lock:
+    store = _state_store()
+    with store.lock:
         if campaign_id:
-            state = _state_store.load()
+            state = store.load()
             state = {k: v for k, v in state.items() if not k.startswith(f"{campaign_id}::")}
-            _state_store.save(state)
+            store.save(state)
         else:
-            _state_store.save({})
+            store.save({})
 
     return jsonify({"ok": True})

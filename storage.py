@@ -38,3 +38,14 @@ class JSONStore:
     def save(self, data):
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+_store_cache = {}
+
+
+def get_store(path, default_factory=list):
+    """Devuelve (y cachea) el JSONStore de esa ruta exacta, para no perder
+    el lock de escritura entre llamadas dentro del mismo proceso."""
+    if path not in _store_cache:
+        _store_cache[path] = JSONStore(path, default_factory)
+    return _store_cache[path]

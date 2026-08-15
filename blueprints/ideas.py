@@ -4,22 +4,23 @@ from datetime import datetime
 
 from flask import Blueprint, Response, jsonify, request
 
-from auth import login_required
+from auth import current_user_dir, login_required
 from blueprints.projects import load_projects
-from paths import DATA_DIR
-from storage import JSONStore
+from storage import get_store
 
 ideas_bp = Blueprint("ideas", __name__, url_prefix="/api")
 
-_ideas_store = JSONStore(os.path.join(DATA_DIR, "ideas.json"), default_factory=list)
+
+def _ideas_store():
+    return get_store(os.path.join(current_user_dir(), "ideas.json"), list)
 
 
 def load_ideas():
-    return _ideas_store.load()
+    return _ideas_store().load()
 
 
 def save_ideas(ideas):
-    _ideas_store.save(ideas)
+    _ideas_store().save(ideas)
 
 
 @ideas_bp.route("/ideas", methods=["GET"])
@@ -50,7 +51,8 @@ def create_idea():
         "created_at": datetime.now().isoformat(timespec="seconds"),
     }
 
-    with _ideas_store.lock:
+    store = _ideas_store()
+    with store.lock:
         ideas = load_ideas()
         ideas.append(idea)
         save_ideas(ideas)
@@ -63,7 +65,8 @@ def create_idea():
 def update_idea(idea_id):
     data = request.get_json(force=True) or {}
 
-    with _ideas_store.lock:
+    store = _ideas_store()
+    with store.lock:
         ideas = load_ideas()
         idea = next((i for i in ideas if i["id"] == idea_id), None)
         if not idea:
@@ -86,7 +89,8 @@ def update_idea(idea_id):
 @ideas_bp.route("/ideas/<idea_id>", methods=["DELETE"])
 @login_required
 def delete_idea(idea_id):
-    with _ideas_store.lock:
+    store = _ideas_store()
+    with store.lock:
         ideas = load_ideas()
         remaining = [i for i in ideas if i["id"] != idea_id]
         if len(remaining) == len(ideas):

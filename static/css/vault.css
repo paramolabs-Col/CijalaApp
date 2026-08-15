@@ -1,7 +1,7 @@
 .vault-main{ max-width: 720px; margin:0 auto; padding: 24px 20px 60px; }
 
 .vault-form{
-  background:#fff; border:1px solid var(--line); border-radius:16px;
+  background: var(--surface); border:1px solid var(--line); border-radius:16px;
   padding:16px; margin-bottom:22px;
   display:flex; flex-direction:column; gap:10px;
 }
@@ -9,27 +9,29 @@
   font-family:'Inter',sans-serif; font-size:14.5px;
   border:1px solid var(--line); border-radius:10px;
   padding:10px 12px; resize:vertical; min-height:50px;
+  background: var(--surface); color: var(--ink);
 }
 .vault-form-row{ display:flex; gap:10px; flex-wrap:wrap; }
 .vault-form-row input{
   font-family:'Inter',sans-serif; font-size:13.5px;
   border:1px solid var(--line); border-radius:10px;
   padding:8px 10px; flex:1; min-width:140px;
+  background: var(--surface); color: var(--ink);
 }
 .vault-form button{
   align-self:flex-end;
   font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;
-  color:#fff; background: var(--navy); border:none;
+  color: var(--on-accent); background: var(--navy); border:none;
   border-radius:10px; padding:10px 18px; cursor:pointer;
 }
 .vault-form button:hover{ background: var(--navy-deep); }
 
 .vault-card{
-  background:#fff; border:1px solid var(--line); border-radius:14px;
+  background: var(--surface); border:1px solid var(--line); border-radius:14px;
   padding:14px 16px; margin-bottom:12px;
 }
 .vault-card-top{ display:flex; align-items:center; gap:10px; margin-bottom:6px; }
 .vault-name{ font-weight:700; font-size:14.5px; flex:1; }
-.vault-field{ display:flex; align-items:center; gap:8px; font-size:13px; color:#3a4a54; margin:3px 0; }
-.vault-field .val{ font-family: monospace; background:var(--paper); padding:2px 8px; border-radius:6px; }
+.vault-field{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--ink); margin:3px 0; }
+.vault-field .val{ font-family: monospace; background: var(--chip-bg); padding:2px 8px; border-radius:6px; }
 .vault-actions{ display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }

@@ -3,9 +3,8 @@
   <div class="campaign-toolbar">
     <select id="campaignSelect"></select>
     <button class="toolbar-btn" id="newCampaignBtn">+ Nueva campaña</button>
-    <button class="toolbar-btn" id="editCampaignBtn">✎ Editar</button>
+    <button class="toolbar-btn" id="editCampaignBtn"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Editar</button>
     <button class="toolbar-btn danger" id="deleteCampaignBtn">Eliminar</button>
-    <a class="reset-btn" href="/logout" style="margin-left:auto;background:#eee;color:#5b7482;border-color:var(--line);">Salir</a>
   </div>
 
   <form id="newCampaignForm" class="panel-form" hidden>
@@ -15,22 +14,11 @@
     <input type="text" id="ncMonth" placeholder="Ej: Agosto 2026">
     <label class="field-label">Origen</label>
     <select id="ncSource">
-      <option value="">Vacía (arma los días vos, con fecha de inicio + duración)</option>
+      <option value="">Vacía (arma los días vos)</option>
     </select>
-    <div class="row">
-      <label class="field-label" style="align-self:center;">Fecha de inicio</label>
-      <input type="date" id="ncStartDate">
-    </div>
-    <div class="row" id="ncDurationRow">
-      <label class="field-label" style="align-self:center;">Duración</label>
-      <select id="ncDuration">
-        <option value="7">1 semana (7 días)</option>
-        <option value="15">15 días</option>
-        <option value="30">1 mes (30 días)</option>
-        <option value="custom">Personalizada</option>
-      </select>
-      <input type="number" id="ncDurationCustom" placeholder="# de días" style="max-width:110px;" hidden>
-    </div>
+    <label class="field-label">Fechas de la campaña</label>
+    <div class="daterange-summary" id="ncRangeSummary">Elegí el día de inicio y el día final</div>
+    <div class="daterange-cal" id="ncCalendar"></div>
     <div class="actions">
       <button type="button" class="toolbar-btn" id="ncCancel">Cancelar</button>
       <button type="submit" class="toolbar-btn primary">Crear</button>

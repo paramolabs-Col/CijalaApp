@@ -1,18 +1,27 @@
 body{
-  margin:0; font-family:Inter,Arial,sans-serif; background:#0a1f3a;
+  margin:0; font-family:Inter,Arial,sans-serif; background:#090a10;
   display:flex; align-items:center; justify-content:center; min-height:100vh;
 }
 form{
   background:#fff; border-radius:16px; padding:32px 28px; width:280px;
-  box-shadow:0 20px 50px rgba(0,0,0,.3);
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
 }
-h1{ font-size:18px; margin:0 0 18px; color:#0a1f3a; }
+h1{ font-size:18px; margin:0 0 18px; color:#090a10; text-align:center; }
+.login-logo{ display:block; width:96px; height:96px; margin:0 auto 14px; border-radius:16px; }
 input{
   width:100%; box-sizing:border-box; padding:10px 12px; border-radius:10px;
-  border:1px solid #d8e6e5; font-size:14px; margin-bottom:12px;
+  border:1px solid #d8dade; font-size:14px; margin-bottom:12px;
+}
+.numeric-mask{
+  -webkit-text-security: disc;
+  text-security: disc;
+  letter-spacing: 3px;
 }
 button{
-  width:100%; padding:11px; border:none; border-radius:10px; background:#0a1f3a;
-  color:#fff; font-weight:700; font-size:14px; cursor:pointer;
+  width:100%; padding:11px; border:none; border-radius:10px; background:#090a10;
+  color:#00fbf1; font-weight:700; font-size:14px; cursor:pointer;
 }
 .err{ color:#c0392b; font-size:12.5px; margin-bottom:10px; }
+.ok{ color:#1fae86; font-size:12.5px; margin-bottom:10px; }
+.alt-link{ text-align:center; font-size:12.5px; margin-top:6px; }
+.alt-link a{ color:#090a10; }

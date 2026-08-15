@@ -3,21 +3,32 @@ import uuid
 
 from flask import Blueprint, jsonify, request
 
-from auth import login_required
-from paths import DATA_DIR
-from storage import JSONStore
+from auth import current_user_dir, login_required
+from storage import get_store
 
 task_templates_bp = Blueprint("task_templates", __name__, url_prefix="/api")
 
-_templates_store = JSONStore(os.path.join(DATA_DIR, "task_templates.json"), default_factory=list)
+_DEFAULT_TEMPLATES = [
+    {"time": "9:00 a.m.", "platform": ["fb", "igfeed"], "label": "Publicar banner", "desc": ""},
+    {"time": "12:00 m.", "platform": ["igstory"], "label": "Publicar story", "desc": ""},
+    {"time": "5:00 p.m.", "platform": ["wa"], "label": "Estado de WhatsApp", "desc": ""},
+]
+
+
+def _seed_templates():
+    return [{"id": uuid.uuid4().hex[:10], **t} for t in _DEFAULT_TEMPLATES]
+
+
+def _templates_store():
+    return get_store(os.path.join(current_user_dir(), "task_templates.json"), _seed_templates)
 
 
 def load_templates():
-    return _templates_store.load()
+    return _templates_store().load()
 
 
 def save_templates(templates):
-    _templates_store.save(templates)
+    _templates_store().save(templates)
 
 
 @task_templates_bp.route("/task-templates", methods=["GET"])
@@ -44,7 +55,8 @@ def create_template():
         "desc": (data.get("desc") or "").strip(),
     }
 
-    with _templates_store.lock:
+    store = _templates_store()
+    with store.lock:
         templates = load_templates()
         templates.append(template)
         save_templates(templates)
@@ -57,7 +69,8 @@ def create_template():
 def update_template(template_id):
     data = request.get_json(force=True) or {}
 
-    with _templates_store.lock:
+    store = _templates_store()
+    with store.lock:
         templates = load_templates()
         template = next((t for t in templates if t["id"] == template_id), None)
         if not template:
@@ -80,7 +93,8 @@ def update_template(template_id):
 @task_templates_bp.route("/task-templates/<template_id>", methods=["DELETE"])
 @login_required
 def delete_template(template_id):
-    with _templates_store.lock:
+    store = _templates_store()
+    with store.lock:
         templates = load_templates()
         remaining = [t for t in templates if t["id"] != template_id]
         if len(remaining) == len(templates):

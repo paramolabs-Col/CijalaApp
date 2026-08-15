@@ -1,7 +1,7 @@
 .ideas-main{ max-width: 720px; margin:0 auto; padding: 24px 20px 60px; }
 
 .idea-form{
-  background:#fff; border:1px solid var(--line); border-radius:16px;
+  background: var(--surface); border:1px solid var(--line); border-radius:16px;
   padding:16px; margin-bottom:22px;
   display:flex; flex-direction:column; gap:10px;
 }
@@ -9,17 +9,19 @@
   font-family:'Inter',sans-serif; font-size:14.5px;
   border:1px solid var(--line); border-radius:10px;
   padding:10px 12px; resize:vertical; min-height:70px;
+  background: var(--surface); color: var(--ink);
 }
 .idea-form-row{ display:flex; gap:10px; flex-wrap:wrap; }
 .idea-form-row select, .idea-form-row input{
   font-family:'Inter',sans-serif; font-size:13.5px;
   border:1px solid var(--line); border-radius:10px;
   padding:8px 10px; flex:1; min-width:140px;
+  background: var(--surface); color: var(--ink);
 }
 .idea-form button{
   align-self:flex-end;
   font-family:'Poppins',sans-serif; font-weight:700; font-size:13px;
-  color:#fff; background: var(--navy); border:none;
+  color: var(--on-accent); background: var(--navy); border:none;
   border-radius:10px; padding:10px 18px; cursor:pointer;
 }
 .idea-form button:hover{ background: var(--navy-deep); }
@@ -31,7 +33,7 @@
 .idea-filters select, .idea-filters input{
   font-family:'Inter',sans-serif; font-size:13px;
   border:1px solid var(--line); border-radius:20px;
-  padding:6px 12px;
+  padding:6px 12px; background: var(--surface); color: var(--ink);
 }
 .export-btn{
   margin-left:auto;
@@ -40,10 +42,11 @@
   border:1px solid var(--teal); border-radius:20px;
   padding:7px 14px; cursor:pointer; text-decoration:none;
 }
-.export-btn:hover{ background: var(--teal); color:#fff; }
+[data-theme="dark"] .export-btn{ color: var(--ink); }
+.export-btn:hover{ background: var(--teal); color: var(--navy-deep); }
 
 .idea-card{
-  background:#fff; border:1px solid var(--line); border-radius:14px;
+  background: var(--surface); border:1px solid var(--line); border-radius:14px;
   padding:14px 16px; margin-bottom:12px;
   display:flex; gap:12px; align-items:flex-start;
 }
@@ -57,9 +60,10 @@
   font-weight:700; color: var(--navy); background: var(--teal-soft);
   padding:2px 9px; border-radius:20px;
 }
-.idea-tag{ color:#5b7482; background:rgba(10,31,58,0.06); padding:2px 8px; border-radius:20px; }
-.idea-date{ color:#8fa3ab; margin-left:auto; }
+[data-theme="dark"] .idea-project{ color: var(--ink); }
+.idea-tag{ color: var(--muted); background: var(--chip-bg); padding:2px 8px; border-radius:20px; }
+.idea-date{ color: var(--muted-2); margin-left:auto; }
 .idea-delete{
-  background:none; border:none; color:var(--danger); font-size:16px;
+  background:none; border:none; color: var(--danger); font-size:16px;
   cursor:pointer; flex-shrink:0; padding:2px 4px;
 }

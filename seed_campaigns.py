@@ -5,5 +5,6 @@ def seed_campaigns():
         "id": "plantilla",
         "name": "Nueva campaña",
         "month": "",
+        "color": "#0a1f3a",
         "days": [],
     }]

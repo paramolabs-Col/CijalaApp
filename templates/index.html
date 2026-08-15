@@ -4,12 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de campañas e ideas</title>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('theme');
+    if(t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+      document.documentElement.setAttribute('data-theme','dark');
+    }
+  }catch(e){}
+})();
+</script>
 <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
 <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Panel">
-<meta name="theme-color" content="#0a1f3a">
+<meta name="apple-mobile-web-app-title" content="Páramo Labs">
+<meta name="theme-color" content="#000000">
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/campaign.css') }}">
@@ -20,11 +31,23 @@
 <body>
 
 <nav class="app-tabs">
-  <button class="tab-btn active" data-tab="campaign">📋 Campañas</button>
-  <button class="tab-btn" data-tab="templates">🧩 Plantillas</button>
-  <button class="tab-btn" data-tab="ideas">💡 Ideas</button>
-  <button class="tab-btn" data-tab="vault">🔒 Baúl</button>
+  <button class="tab-btn active" data-tab="campaign"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Campañas</button>
+  <button class="tab-btn" data-tab="templates"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" stroke="currentColor" stroke-width="1.7"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" stroke="currentColor" stroke-width="1.7"/></svg> Plantillas</button>
+  <button class="tab-btn" data-tab="ideas"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M9 18h6M10 21h4M8 14a5 5 0 1 1 8 0c-.8.9-1.3 1.6-1.4 2.4H9.4C9.3 15.6 8.8 14.9 8 14Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Ideas</button>
+  <button class="tab-btn" data-tab="vault"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7"/></svg> Baúl</button>
 </nav>
+
+<div class="user-bar">
+  <a class="user-identity" href="{{ url_for('auth.account') }}" title="Editar perfil">
+    <strong>{{ user_name }}</strong>{% if user_role %} · {{ user_role }}{% endif %}
+  </a>
+  <div class="user-actions">
+    <button id="themeToggle" class="theme-toggle" title="Cambiar tema"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></button>
+    <button id="notifyBtn" class="reset-btn" style="background:#eee;color:#5b7482;border-color:var(--line);"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" style="vertical-align:-2px;margin-right:3px;"><path d="M6 10a6 6 0 1 1 12 0c0 3.5 1.2 5 1.8 5.6H4.2C4.8 15 6 13.5 6 10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Activar notificaciones</button>
+    {% if is_admin %}<a class="reset-btn" href="{{ url_for('users_admin.list_users') }}" style="background:#eee;color:#5b7482;border-color:var(--line);">Usuarios</a>{% endif %}
+    <a class="reset-btn" href="{{ url_for('auth.logout') }}" style="background:#eee;color:#5b7482;border-color:var(--line);">Salir</a>
+  </div>
+</div>
 
 {% include "partials/task_templates.html" %}
 {% include "partials/campaign.html" %}
@@ -32,9 +55,12 @@
 {% include "partials/vault.html" %}
 
 <script src="{{ url_for('static', filename='js/task_templates.js') }}"></script>
+<script src="{{ url_for('static', filename='js/daterange.js') }}"></script>
 <script src="{{ url_for('static', filename='js/campaign.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ideas.js') }}"></script>
 <script src="{{ url_for('static', filename='js/vault.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 <script src="{{ url_for('static', filename='js/tabs.js') }}"></script>
 
 </body>
