@@ -72,6 +72,8 @@ h1,h2,h3,.display{font-family:'Poppins',sans-serif;}
 
 /* Cada página secundaria arranca oculta; tabs.js las muestra al hacer click */
 #templatesPage, #ideasPage, #vaultPage{ display:none; }
+/* Evita que display:flex/block en clases propias anule el atributo hidden */
+[hidden]{ display:none !important; }
 
 /* ---------------- Header genérico (usado por las 3 secciones) ---------------- */
 header{

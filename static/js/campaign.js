@@ -49,12 +49,12 @@ async function loadCampaigns(preferId){
   campaigns = await res.json();
 
   const select = document.getElementById("campaignSelect");
+  const wrap = document.getElementById("campaignSelectWrap");
   if (!campaigns.length){
-    select.innerHTML = '<option value="" disabled selected>Sin campañas aún</option>';
-    select.style.display = 'none';
+    if (wrap) wrap.style.display = 'none';
     return;
   }
-  select.style.display = '';
+  if (wrap) wrap.style.display = '';
   select.innerHTML = campaigns.map(c => `<option value="${c.id}" style="color:${c.color||'#0a1f3a'}">● ${c.name}${c.month ? " · " + c.month : ""}</option>`).join("");
 
   const ncSource = document.getElementById("ncSource");
