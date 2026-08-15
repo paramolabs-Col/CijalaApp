@@ -112,7 +112,8 @@
     </svg>
   </button>
   <a class="user-identity" href="{{ url_for('auth.account') }}" title="Editar perfil">
-    <strong>{{ user_name }}</strong>{% if user_role %} · <span class="user-role">{{ user_role }}</span>{% endif %}
+    <strong class="user-name">{{ user_name }}</strong>
+    {% if user_role %}<span class="user-role">{{ user_role }}</span>{% endif %}
   </a>
   <span id="clockWidget" class="clock-widget"></span>
   <div id="weatherCard" class="weather-card" hidden>
