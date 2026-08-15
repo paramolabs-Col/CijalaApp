@@ -47,9 +47,14 @@ function currentCampaign(){
 async function loadCampaigns(preferId){
   const res = await fetch("/api/campaigns");
   campaigns = await res.json();
-  if (!campaigns.length) return;
 
   const select = document.getElementById("campaignSelect");
+  if (!campaigns.length){
+    select.innerHTML = '<option value="" disabled selected>Sin campañas aún</option>';
+    select.style.display = 'none';
+    return;
+  }
+  select.style.display = '';
   select.innerHTML = campaigns.map(c => `<option value="${c.id}" style="color:${c.color||'#0a1f3a'}">● ${c.name}${c.month ? " · " + c.month : ""}</option>`).join("");
 
   const ncSource = document.getElementById("ncSource");
