@@ -114,6 +114,7 @@
   <a class="user-identity" href="{{ url_for('auth.account') }}" title="Editar perfil">
     <strong>{{ user_name }}</strong>{% if user_role %} · <span class="user-role">{{ user_role }}</span>{% endif %}
   </a>
+  <span id="clockWidget" class="clock-widget"></span>
   <div id="weatherCard" class="weather-card" hidden>
     <div class="weather-icon-wrap" id="weatherIconEl"></div>
     <div class="weather-info">
@@ -157,6 +158,21 @@
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 <script src="{{ url_for('static', filename='js/tabs.js') }}"></script>
 <script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+<script>
+(function(){
+  const el = document.getElementById('clockWidget');
+  if (!el) return;
+  function tick(){
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    el.textContent = `${h}:${m}:${s}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
 
 </body>
 </html>

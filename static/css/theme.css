@@ -255,9 +255,16 @@ footer{
 .user-identity:hover{ text-decoration:underline; }
 .user-role{ font-weight:400; color: var(--muted); }
 
+/* ---------------- Clock widget ---------------- */
+.clock-widget{
+  font-family:'Poppins',sans-serif; font-weight:700; font-size:14px;
+  color: var(--ink); white-space:nowrap; margin-left:auto;
+}
+@media(max-width:480px){ .clock-widget{ font-size:12px; } }
+
 /* ---------------- Weather card ---------------- */
 .weather-card{
-  margin-left:auto; flex-shrink:0;
+  flex-shrink:0;
   display:flex; align-items:center; gap:10px;
   background: var(--chip-bg); border:1px solid var(--line);
   border-radius:14px; padding:8px 14px 8px 10px;
