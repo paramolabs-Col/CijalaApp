@@ -2,10 +2,10 @@ function activateTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
-  document.getElementById('campaignPage').style.display = tab === 'campaign' ? '' : 'none';
-  document.getElementById('templatesPage').style.display = tab === 'templates' ? '' : 'none';
-  document.getElementById('ideasPage').style.display = tab === 'ideas' ? '' : 'none';
-  document.getElementById('vaultPage').style.display = tab === 'vault' ? '' : 'none';
+  document.getElementById('campaignPage').style.display = tab === 'campaign' ? 'block' : 'none';
+  document.getElementById('templatesPage').style.display = tab === 'templates' ? 'block' : 'none';
+  document.getElementById('ideasPage').style.display = tab === 'ideas' ? 'block' : 'none';
+  document.getElementById('vaultPage').style.display = tab === 'vault' ? 'block' : 'none';
   if (tab === 'ideas') loadIdeas();
   if (tab === 'vault') loadVault();
   if (tab === 'templates') loadTemplates();

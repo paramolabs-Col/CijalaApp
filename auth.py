@@ -66,6 +66,9 @@ def admin_required(view):
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    if not load_users():
+        return redirect(url_for("auth.register"))
+
     error = None
     if request.method == "POST":
         email = (request.form.get("email") or "").strip().lower()
