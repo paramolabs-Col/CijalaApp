@@ -119,9 +119,9 @@ function renderCampaignList(){
     const pct = total ? Math.round((checked / total) * 100) : 0;
     const daysCount = (c.days || []).length;
     return `
-      <div class="campaign-card" data-id="${c.id}" style="border-left-color:${color}">
+      <div class="campaign-card" data-id="${c.id}" style="border-color:${color}">
         <div class="camp-card-body">
-          <div class="camp-card-name"></div>
+          <div class="camp-card-name" style="color:${color}"></div>
           <div class="camp-card-meta">${c.month ? c.month + ' · ' : ''}${daysCount} día${daysCount !== 1 ? 's' : ''}</div>
           ${total ? `<div class="camp-card-progress">
             <div class="camp-card-bar"><div class="camp-card-fill" style="width:${pct}%;background:${color}"></div></div>
