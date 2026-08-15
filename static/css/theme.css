@@ -57,20 +57,21 @@ h1,h2,h3,.display{font-family:'Poppins',sans-serif;}
 .app-tabs{
   position: sticky; top:0; z-index: 70;
   display:flex; gap:0;
-  background: var(--navy-deep);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: var(--surface);
+  border-bottom: 2px solid var(--line);
   height:40px;
 }
 .tab-btn{
   flex:1; max-width:220px;
   display:flex; align-items:center; justify-content:center; gap:5px;
   font-family:'Inter',sans-serif; font-weight:700; font-size:13px;
-  color:#8fa3b5; background:transparent; border:none;
+  color: var(--muted); background:transparent; border:none;
   padding: 0 10px; cursor:pointer;
   border-bottom: 3px solid transparent;
   white-space:nowrap;
 }
-.tab-btn.active{ color: var(--on-accent); border-bottom-color: var(--teal); }
+.tab-btn.active{ color: var(--ink); border-bottom-color: var(--gold); }
+[data-theme="dark"] .tab-btn.active{ color: var(--on-accent); border-bottom-color: var(--teal); }
 
 /* Cada página secundaria arranca oculta; tabs.js las muestra al hacer click */
 #templatesPage, #ideasPage, #vaultPage{ display:none; }
@@ -79,46 +80,69 @@ h1,h2,h3,.display{font-family:'Poppins',sans-serif;}
 
 /* ---------------- Header genérico (usado por las 3 secciones) ---------------- */
 header{
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
-  color: var(--on-accent);
+  background: linear-gradient(135deg, #edfcfc 0%, #f5fffe 100%);
+  color: var(--ink);
   padding: 32px 24px 26px;
   position: sticky;
   top:76px;
   z-index: 50;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 4px 16px rgba(0,180,170,0.08);
 }
 .header-inner{max-width: 980px; margin:0 auto;}
 .eyebrow{
   text-transform:uppercase;
   letter-spacing:.14em;
   font-size:11px;
-  color: var(--teal);
+  color: #007a75;
   font-weight:700;
   margin-bottom:6px;
 }
 header h1{font-size: 26px; margin:0 0 4px; font-weight:800; line-height:1.15;}
-.subrange{font-size:13.5px; color:#a9c2d9; margin-bottom:18px;}
+.subrange{font-size:13.5px; color: var(--muted); margin-bottom:18px;}
 
 .progress-wrap{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
 .progress-track{
   flex:1; min-width:180px; height:8px; border-radius:20px;
-  background: rgba(255,255,255,0.12); overflow:hidden;
+  background: rgba(0,0,0,0.1); overflow:hidden;
 }
 .progress-fill{
   height:100%; width:0%;
-  background: linear-gradient(90deg, var(--teal), var(--gold));
+  background: linear-gradient(90deg, var(--gold), #00e0d6);
   border-radius:20px; transition: width .35s ease;
 }
-.progress-label{font-size:13px; font-weight:600; color: var(--on-accent); white-space:nowrap;}
-.sync-label{font-size:11px; color:#7fe8e2; white-space:nowrap;}
+.progress-label{font-size:13px; font-weight:600; color: var(--ink); white-space:nowrap;}
+.sync-label{font-size:11px; color: var(--muted); white-space:nowrap;}
 .reset-btn, .logout-btn{
-  font-size:11px; font-weight:700; color: var(--on-accent);
-  background: rgba(255,255,255,0.1);
-  border:1px solid rgba(255,255,255,0.25);
+  font-size:11px; font-weight:700; color: var(--muted);
+  background: rgba(0,0,0,0.05);
+  border:1px solid var(--line);
   border-radius:20px; padding:5px 12px; cursor:pointer;
   text-decoration:none; display:inline-block;
 }
-.reset-btn:hover, .logout-btn:hover{background: rgba(255,255,255,0.18);}
+.reset-btn:hover, .logout-btn:hover{ background: rgba(0,0,0,0.1); }
+
+/* dark mode: restaurar header oscuro */
+[data-theme="dark"] header{
+  background: linear-gradient(135deg, #0f2030 0%, #070d12 100%);
+  color: var(--on-accent);
+  border-bottom-color: transparent;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] .eyebrow{ color: var(--teal); }
+[data-theme="dark"] .subrange{ color: #a9c2d9; }
+[data-theme="dark"] .progress-track{ background: rgba(255,255,255,0.12); }
+[data-theme="dark"] .progress-fill{ background: linear-gradient(90deg, var(--teal), var(--gold)); }
+[data-theme="dark"] .progress-label{ color: var(--on-accent); }
+[data-theme="dark"] .sync-label{ color: #7fe8e2; }
+[data-theme="dark"] .reset-btn,
+[data-theme="dark"] .logout-btn{
+  color: var(--on-accent);
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.25);
+}
+[data-theme="dark"] .reset-btn:hover,
+[data-theme="dark"] .logout-btn:hover{ background: rgba(255,255,255,0.18); }
 
 footer{
   max-width:980px; margin: 10px auto 0; padding: 10px 20px 30px;
