@@ -67,7 +67,6 @@ function closeDrawer(){
   document.body.style.overflow = '';
 }
 
-document.getElementById('hamburgerBtn').addEventListener('click', openDrawer);
 document.getElementById('hamburgerBtnBar').addEventListener('click', openDrawer);
 document.getElementById('navDrawerClose').addEventListener('click', closeDrawer);
 document.getElementById('navOverlay').addEventListener('click', (e) => {
