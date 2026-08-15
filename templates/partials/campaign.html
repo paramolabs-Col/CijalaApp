@@ -1,13 +1,16 @@
 <div id="campaignPage">
 
   <div class="campaign-toolbar">
-    <div class="toolbar-campaign-select" id="campaignSelectWrap">
-      <span class="toolbar-label">Lista de campañas</span>
-      <select id="campaignSelect"></select>
+    <div class="toolbar-row">
+      <div class="toolbar-campaign-select" id="campaignSelectWrap">
+        <span class="toolbar-label">Lista de campañas</span>
+        <select id="campaignSelect"></select>
+      </div>
+      <div class="toolbar-campaign-actions">
+        <button class="toolbar-btn" id="editCampaignBtn"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Editar</button>
+        <button class="toolbar-btn danger" id="deleteCampaignBtn">Eliminar</button>
+      </div>
     </div>
-    <button class="toolbar-btn" id="editCampaignBtn"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Editar</button>
-    <button class="toolbar-btn danger" id="deleteCampaignBtn">Eliminar</button>
-    <button class="toolbar-btn primary" id="newCampaignBtn">+ Crear campaña</button>
   </div>
 
   <form id="newCampaignForm" class="panel-form" hidden>

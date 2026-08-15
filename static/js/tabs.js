@@ -6,6 +6,9 @@ function activateTab(tab){
   document.getElementById('templatesPage').style.display = tab === 'templates' ? 'block' : 'none';
   document.getElementById('ideasPage').style.display = tab === 'ideas' ? 'block' : 'none';
   document.getElementById('vaultPage').style.display = tab === 'vault' ? 'block' : 'none';
+  document.querySelectorAll('.bb-section').forEach(s => { s.hidden = true; });
+  const bb = document.getElementById('bb-' + tab);
+  if (bb) bb.hidden = false;
   if (tab === 'ideas') loadIdeas();
   if (tab === 'vault') loadVault();
   if (tab === 'templates') loadTemplates();

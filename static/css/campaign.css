@@ -127,16 +127,13 @@
   flex:1; min-width:0; max-width:240px;
   background: var(--surface); color: var(--ink);
 }
-#newCampaignBtn{ flex-shrink:0; }
-
 @media(max-width:540px){
-  .campaign-toolbar{ flex-direction:column; align-items:stretch; padding:10px 12px; gap:6px; }
+  .campaign-toolbar{ padding:8px 12px; }
   .toolbar-row{ flex-direction:column; gap:6px; }
   .toolbar-campaign-select{ min-width:0; width:100%; }
   .toolbar-campaign-actions{ width:100%; }
   .toolbar-campaign-actions button{ flex:1; justify-content:center; }
   .campaign-toolbar select{ max-width:100%; width:100%; }
-  #newCampaignBtn{ width:100%; justify-content:center; }
 }
 
 .panel-form{

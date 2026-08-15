@@ -54,6 +54,21 @@
 {% include "partials/ideas.html" %}
 {% include "partials/vault.html" %}
 
+<div id="bottomBar" class="bottom-bar">
+  <div class="bb-section" id="bb-campaign">
+    <button class="toolbar-btn primary bottom-bar-btn" id="newCampaignBtn">+ Crear campaña</button>
+  </div>
+  <div class="bb-section" id="bb-templates" hidden>
+    <button class="toolbar-btn primary bottom-bar-btn" onclick="document.getElementById('tplTime').focus();document.getElementById('tplTime').scrollIntoView({behavior:'smooth',block:'center'})">+ Nueva plantilla</button>
+  </div>
+  <div class="bb-section" id="bb-ideas" hidden>
+    <button class="toolbar-btn primary bottom-bar-btn" onclick="document.getElementById('ideaText').focus();document.getElementById('ideaText').scrollIntoView({behavior:'smooth',block:'center'})">+ Nueva idea</button>
+  </div>
+  <div class="bb-section" id="bb-vault" hidden>
+    <button class="toolbar-btn primary bottom-bar-btn" onclick="document.getElementById('vName').focus();document.getElementById('vName').scrollIntoView({behavior:'smooth',block:'center'})">+ Nueva contraseña</button>
+  </div>
+</div>
+
 <script src="{{ url_for('static', filename='js/task_templates.js') }}"></script>
 <script src="{{ url_for('static', filename='js/daterange.js') }}"></script>
 <script src="{{ url_for('static', filename='js/campaign.js') }}"></script>
