@@ -100,7 +100,13 @@ document.getElementById("ideaForm").addEventListener("submit", async (e) => {
   });
 
   document.getElementById("ideaForm").reset();
+  document.getElementById("ideaForm").hidden = true;
   loadIdeas();
+});
+
+document.getElementById("ideaCancelBtn").addEventListener("click", () => {
+  document.getElementById("ideaForm").hidden = true;
+  document.getElementById("ideaForm").reset();
 });
 
 document.getElementById("ideasList").addEventListener("click", async (e) => {

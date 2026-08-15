@@ -1,0 +1,36 @@
+<div id="todosPage" style="display:none">
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">Gestión personal</div>
+      <h1>Mis tareas</h1>
+      <div class="subrange">Organizá tus pendientes por prioridad</div>
+    </div>
+  </header>
+
+  <div class="todos-wrap">
+    <div class="todos-filters">
+      <button class="prio-filter active" data-p="">Todas</button>
+      <button class="prio-filter" data-p="urgent"><span class="semaforo urgent"></span>Urgente</button>
+      <button class="prio-filter" data-p="medium"><span class="semaforo medium"></span>Medio</button>
+      <button class="prio-filter" data-p="low"><span class="semaforo low"></span>Pendiente</button>
+      <label class="prio-filter-done">
+        <input type="checkbox" id="showDone"> Ver completadas
+      </label>
+    </div>
+
+    <div id="todosList"></div>
+
+    <form id="todoForm" class="todo-form" hidden>
+      <input type="text" id="todoText" placeholder="¿Qué tenés que hacer?" required autocomplete="off">
+      <div class="todo-prio-btns">
+        <button type="button" class="prio-btn urgent active" data-p="urgent"><span class="semaforo urgent"></span>Urgente</button>
+        <button type="button" class="prio-btn medium" data-p="medium"><span class="semaforo medium"></span>Medio</button>
+        <button type="button" class="prio-btn low" data-p="low"><span class="semaforo low"></span>Pendiente</button>
+      </div>
+      <div class="todo-form-actions">
+        <button type="button" class="toolbar-btn" id="todoCancelBtn">Cancelar</button>
+        <button type="submit" class="toolbar-btn primary">Agregar tarea</button>
+      </div>
+    </form>
+  </div>
+</div>

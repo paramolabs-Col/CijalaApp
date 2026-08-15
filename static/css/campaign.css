@@ -104,7 +104,7 @@
 
 /* ---------------- Toolbar y formulario de nueva campaña ---------------- */
 .campaign-toolbar{
-  position: sticky; top:76px; z-index:55;
+  position: sticky; top:84px; z-index:55;
   background: var(--surface); border-bottom:1px solid var(--line);
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   padding:10px 16px;

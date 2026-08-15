@@ -7,6 +7,7 @@ from blueprints.ideas import ideas_bp
 from blueprints.projects import projects_bp
 from blueprints.task_templates import task_templates_bp
 from blueprints.users import users_bp
+from blueprints.todos import todos_bp
 from blueprints.vault import vault_bp
 
 app = Flask(__name__)
@@ -18,6 +19,7 @@ app.register_blueprint(projects_bp)
 app.register_blueprint(ideas_bp)
 app.register_blueprint(task_templates_bp)
 app.register_blueprint(day_templates_bp)
+app.register_blueprint(todos_bp)
 app.register_blueprint(vault_bp)
 app.register_blueprint(users_bp)
 

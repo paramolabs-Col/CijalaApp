@@ -3,28 +3,36 @@
     <div class="header-inner">
       <div class="eyebrow">Captura rápida</div>
       <h1>Ideas y pensamientos</h1>
-      <div class="subrange">Anota en la calle, organiza en casa, exporta para desarrollar</div>
+      <div class="subrange">Anotá en el momento, organizá por proyecto y tag, exportá para desarrollar</div>
     </div>
   </header>
 
   <main class="ideas-main">
-    <form id="ideaForm" class="idea-form">
-      <textarea id="ideaText" placeholder="Escribe tu idea..." required></textarea>
+
+    <!-- Formulario oculto por defecto — se abre con el botón "Nueva idea" -->
+    <form id="ideaForm" class="idea-form" hidden>
+      <textarea id="ideaText" placeholder="Escribí tu idea…" required></textarea>
       <div class="idea-form-row">
         <select id="ideaProject">
           <option value="">Sin proyecto</option>
         </select>
-        <input id="ideaTags" type="text" placeholder="tags separados por coma">
+        <input id="ideaTags" type="text" placeholder="tags: marketing, dental, urgente">
       </div>
-      <button type="submit">Guardar idea</button>
+      <div class="idea-form-actions">
+        <button type="button" class="toolbar-btn" id="ideaCancelBtn">Cancelar</button>
+        <button type="submit" class="toolbar-btn primary">Guardar idea</button>
+      </div>
     </form>
 
+    <!-- Filtros siempre visibles -->
     <div class="idea-filters">
       <select id="filterProject">
         <option value="">Todos los proyectos</option>
       </select>
       <input id="filterTag" type="text" placeholder="filtrar por tag">
-      <a id="exportBtn" class="export-btn" href="/api/ideas/export"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M12 3v12M7 10l5 5 5-5M5 20h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Exportar .md</a>
+      <a id="exportBtn" class="export-btn" href="/api/ideas/export">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M12 3v12M7 10l5 5 5-5M5 20h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Exportar .md
+      </a>
     </div>
 
     <div id="ideasList"></div>
