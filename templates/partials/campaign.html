@@ -1,18 +1,6 @@
 <div id="campaignPage">
 
-  <div class="campaign-toolbar">
-    <div class="toolbar-row">
-      <div class="toolbar-campaign-select" id="campaignSelectWrap">
-        <span class="toolbar-label">Lista de campañas</span>
-        <select id="campaignSelect"></select>
-      </div>
-      <div class="toolbar-campaign-actions">
-        <button class="toolbar-btn" id="editCampaignBtn"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Editar</button>
-        <button class="toolbar-btn danger" id="deleteCampaignBtn">Eliminar</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Formulario nueva campaña -->
   <form id="newCampaignForm" class="panel-form" hidden>
     <label class="field-label">Nombre de la campaña</label>
     <input type="text" id="ncName" placeholder="Ej: Campaña semana del 17 de agosto" required>
@@ -31,23 +19,44 @@
     </div>
   </form>
 
-  <header>
-    <div class="header-inner">
-      <div class="eyebrow" id="campEyebrow">Plan de publicación</div>
-      <h1 id="campTitle">Cargando…</h1>
-      <div class="subrange" id="campSubrange"></div>
-      <div class="progress-wrap">
-        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="progress-label" id="progressLabel">0 / 0 tareas publicadas</div>
-        <span class="sync-label" id="syncLabel">Cargando progreso guardado…</span>
-        <button class="reset-btn" id="resetBtn" title="Borra el progreso guardado de esta campaña">Reiniciar progreso</button>
-      </div>
-      <div class="daydots" id="dayDots"></div>
+  <!-- Vista: lista de campañas (por defecto) -->
+  <div id="campaignListView">
+    <div class="campaign-cards" id="campaignCards"></div>
+  </div>
+
+  <!-- Vista: detalle de una campaña -->
+  <div id="campaignDetailView" hidden>
+
+    <div class="campaign-detail-bar">
+      <button class="toolbar-btn" id="backToCampaignsBtn">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" style="vertical-align:-1px;margin-right:4px;"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Campañas
+      </button>
+      <div style="flex:1"></div>
+      <button class="toolbar-btn" id="editCampaignBtn">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" style="vertical-align:-1px;margin-right:3px;"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Editar
+      </button>
+      <button class="toolbar-btn danger" id="deleteCampaignBtn">Eliminar</button>
     </div>
-  </header>
 
-  <main id="main"></main>
-  <div id="campaignEditor" hidden></div>
+    <header>
+      <div class="header-inner">
+        <div class="eyebrow" id="campEyebrow">Plan de publicación</div>
+        <h1 id="campTitle">Cargando…</h1>
+        <div class="subrange" id="campSubrange"></div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="progress-label" id="progressLabel">0 / 0 tareas publicadas</div>
+          <span class="sync-label" id="syncLabel">Cargando progreso guardado…</span>
+          <button class="reset-btn" id="resetBtn" title="Borra el progreso guardado de esta campaña">Reiniciar progreso</button>
+        </div>
+        <div class="daydots" id="dayDots"></div>
+      </div>
+    </header>
 
-  <footer>Páramo Labs S.A.S. · El progreso se guarda automáticamente en el servidor.</footer>
+    <main id="main"></main>
+    <div id="campaignEditor" hidden></div>
+
+    <footer>Páramo Labs S.A.S. · El progreso se guarda automáticamente en el servidor.</footer>
+  </div>
+
 </div>

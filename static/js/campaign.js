@@ -80,23 +80,71 @@ function currentCampaign(){
 async function loadCampaigns(preferId){
   const res = await fetch("/api/campaigns");
   campaigns = await res.json();
-
-  const select = document.getElementById("campaignSelect");
-  const wrap = document.getElementById("campaignSelectWrap");
-  if (!campaigns.length){
-    if (wrap) wrap.style.display = 'none';
-    return;
-  }
-  if (wrap) wrap.style.display = '';
-  select.innerHTML = campaigns.map(c => `<option value="${c.id}" style="color:${c.color||'#0a1f3a'}">● ${c.name}${c.month ? " · " + c.month : ""}</option>`).join("");
+  await loadState();
 
   const ncSource = document.getElementById("ncSource");
   ncSource.innerHTML = `<option value="">Vacía (sin días)</option>` +
     campaigns.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 
-  currentCampaignId = preferId && campaigns.some(c => c.id === preferId) ? preferId : campaigns[0].id;
-  select.value = currentCampaignId;
-  await loadState();
+  if (preferId && campaigns.some(c => c.id === preferId)){
+    openCampaign(preferId);
+  } else {
+    renderCampaignList();
+  }
+}
+
+function campaignProgress(c){
+  let total = 0, checked = 0;
+  (c.days || []).forEach(day => {
+    (day.tasks || []).forEach(task => {
+      total++;
+      if (stateMap[taskKey(c.id, day.date, task.id)]) checked++;
+    });
+  });
+  return {total, checked};
+}
+
+function renderCampaignList(){
+  document.getElementById("campaignListView").hidden = false;
+  document.getElementById("campaignDetailView").hidden = true;
+
+  const container = document.getElementById("campaignCards");
+  if (!campaigns.length){
+    container.innerHTML = `<div class="empty-state" style="margin-top:40px;">Sin campañas todavía. Creá la primera con el botón de abajo.</div>`;
+    return;
+  }
+  container.innerHTML = campaigns.map(c => {
+    const color = c.color || '#0a1f3a';
+    const {total, checked} = campaignProgress(c);
+    const pct = total ? Math.round((checked / total) * 100) : 0;
+    const daysCount = (c.days || []).length;
+    return `
+      <div class="campaign-card" data-id="${c.id}" style="border-left-color:${color}">
+        <div class="camp-card-body">
+          <div class="camp-card-name"></div>
+          <div class="camp-card-meta">${c.month ? c.month + ' · ' : ''}${daysCount} día${daysCount !== 1 ? 's' : ''}</div>
+          ${total ? `<div class="camp-card-progress">
+            <div class="camp-card-bar"><div class="camp-card-fill" style="width:${pct}%;background:${color}"></div></div>
+            <span class="camp-card-pct">${checked}/${total} tareas</span>
+          </div>` : ''}
+        </div>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" class="camp-card-arrow">
+          <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.campaign-card').forEach(card => {
+    const c = campaigns.find(x => x.id === card.dataset.id);
+    card.querySelector('.camp-card-name').textContent = c.name;
+    card.addEventListener('click', () => openCampaign(c.id));
+  });
+}
+
+function openCampaign(id){
+  currentCampaignId = id;
+  document.getElementById("campaignListView").hidden = true;
+  document.getElementById("campaignDetailView").hidden = false;
   renderCampaign();
 }
 
@@ -124,7 +172,7 @@ function renderCampaign(){
   document.getElementById("campSubrange").textContent = campaign.month || "";
   document.getElementById("campEyebrow").textContent = "Plan de publicación";
   document.getElementById("campEyebrow").style.color = color;
-  document.getElementById("progressFill").style.background = `linear-gradient(90deg, ${color}, #f5b942)`;
+  document.getElementById("progressFill").style.background = color;
 
   const dotsContainer = document.getElementById("dayDots");
   dotsContainer.innerHTML = "";
@@ -271,10 +319,10 @@ document.getElementById("resetBtn").addEventListener("click", async () => {
   updateProgress();
 });
 
-document.getElementById("campaignSelect").addEventListener("change", (e) => {
-  currentCampaignId = e.target.value;
+/* ---------------- Volver a lista ---------------- */
+document.getElementById("backToCampaignsBtn").addEventListener("click", () => {
   exitEditMode();
-  renderCampaign();
+  renderCampaignList();
 });
 
 /* ---------------- Nueva campaña ---------------- */
@@ -307,7 +355,11 @@ document.getElementById("newCampaignForm").addEventListener("submit", async (e) 
   const created = await res.json();
   document.getElementById("newCampaignForm").reset();
   document.getElementById("newCampaignForm").hidden = true;
-  await loadCampaigns(created.id);
+  const r = await fetch("/api/campaigns");
+  campaigns = await r.json();
+  document.getElementById("ncSource").innerHTML = `<option value="">Vacía (sin días)</option>` +
+    campaigns.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+  openCampaign(created.id);
   enterEditMode(true);
 });
 
@@ -316,7 +368,9 @@ document.getElementById("deleteCampaignBtn").addEventListener("click", async () 
   if (!campaign) return;
   if (!confirm(`¿Eliminar la campaña "${campaign.name}"? Esta acción no se puede deshacer.`)) return;
   await fetch(`/api/campaigns/${campaign.id}`, {method: "DELETE"});
-  await loadCampaigns();
+  const res = await fetch("/api/campaigns");
+  campaigns = await res.json();
+  renderCampaignList();
 });
 
 /* ---------------- Editor de campaña ---------------- */
@@ -532,18 +586,21 @@ document.getElementById("editCampaignBtn").addEventListener("click", async () =>
     enterEditMode();
     return;
   }
-  editingDraft.name = document.getElementById("edName").value.trim() || editingDraft.name;
+  editingDraft.name  = document.getElementById("edName").value.trim() || editingDraft.name;
   editingDraft.month = document.getElementById("edMonth").value.trim();
   editingDraft.color = document.getElementById("edColor").value;
 
-  const res = await fetch(`/api/campaigns/${editingDraft.id}`, {
+  const savedId = editingDraft.id;
+  await fetch(`/api/campaigns/${savedId}`, {
     method: "PUT",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({name: editingDraft.name, month: editingDraft.month, color: editingDraft.color, days: editingDraft.days})
   });
-  await res.json();
   exitEditMode();
-  await loadCampaigns(editingDraft.id);
+  const r = await fetch("/api/campaigns");
+  campaigns = await r.json();
+  currentCampaignId = savedId;
+  renderCampaign();
 });
 
 /* ---------------- Init ---------------- */
