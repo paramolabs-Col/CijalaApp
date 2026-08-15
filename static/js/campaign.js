@@ -14,6 +14,32 @@ const dowNames = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","S�
 const monthNames = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const phaseInfo = {}; // ya no se usa para agrupar (ver weekRangeLabel) — queda vacío por compatibilidad
 
+/* Convierte "9:00 a.m." o "14:30" al formato HH:MM para <input type="time"> */
+function toTimeInput(str){
+  if (!str) return '';
+  if (/^\d{2}:\d{2}$/.test(str)) return str;
+  const m = str.trim().match(/(\d{1,2}):(\d{2})\s*(a\.?\s?m\.?|p\.?\s?m\.?|m\.?)/i);
+  if (!m) return '';
+  let h = parseInt(m[1]);
+  const min = m[2];
+  const suf = m[3].toLowerCase().replace(/[.\s]/g,'');
+  if (suf === 'pm' && h !== 12) h += 12;
+  if (suf === 'am' && h === 12) h = 0;
+  if (suf === 'm') h = 12;
+  return `${String(h).padStart(2,'0')}:${min}`;
+}
+
+/* Convierte HH:MM a "9:00 a.m." para mostrar en la vista de campaña */
+function displayTime(str){
+  if (!str) return '';
+  if (str.includes('a.m.') || str.includes('p.m.')) return str;
+  const hm = str.match(/^(\d{1,2}):(\d{2})$/);
+  if (!hm) return str;
+  const h = parseInt(hm[1]), mins = hm[2];
+  const period = h >= 12 ? 'p.m.' : 'a.m.';
+  return `${(h % 12) || 12}:${mins} ${period}`;
+}
+
 function dateMeta(iso){
   const dt = new Date(iso + "T00:00:00");
   return { dayNum: String(dt.getDate()), dow: dowNames[dt.getDay()], month: monthNames[dt.getMonth()] };
@@ -238,7 +264,7 @@ function renderCampaign(){
           <div class="task-desc"></div>
         </div>
       `;
-      row.querySelector(".time-badge").textContent = t.time;
+      row.querySelector(".time-badge").textContent = displayTime(t.time);
       row.querySelector(".task-label").textContent = t.label;
       row.querySelector(".task-desc").textContent = t.desc;
       tasksWrap.appendChild(row);
@@ -554,7 +580,7 @@ function buildTaskEditRow(task, dayIdx, taskIdx){
 
   row.innerHTML = `
     <div class="row">
-      <input type="text" class="ed-time" placeholder="Hora (ej: 9:00 a.m.)" value="${(task.time||'').replace(/"/g,'&quot;')}" style="max-width:160px;">
+      <input type="time" class="ed-time" value="${toTimeInput(task.time||'')}" style="max-width:160px;">
       <button type="button" class="mini-btn danger ed-deltask" style="margin-left:auto;">Eliminar tarea</button>
     </div>
     <div class="platform-checks">${platformChecks}</div>
@@ -562,8 +588,8 @@ function buildTaskEditRow(task, dayIdx, taskIdx){
     <textarea class="ed-tdesc" placeholder="Descripción" style="min-height:44px;">${task.desc||''}</textarea>
   `;
 
-  row.querySelector(".ed-time").addEventListener("input", (e) => {
-    editingDraft.days[dayIdx].tasks[taskIdx].time = e.target.value;
+  row.querySelector(".ed-time").addEventListener("change", (e) => {
+    editingDraft.days[dayIdx].tasks[taskIdx].time = e.target.value; /* stores HH:MM */
     scheduleDraftSave();
   });
   row.querySelector(".ed-tlabel").addEventListener("input", (e) => {
