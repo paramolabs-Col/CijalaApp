@@ -1,3 +1,58 @@
+/* ---------------- PIN Screen ---------------- */
+.vault-pin-screen{
+  display:flex; align-items:center; justify-content:center;
+  padding: 40px 20px 80px; min-height:60vh;
+}
+.vault-pin-box{
+  background: var(--surface); border:1px solid var(--line);
+  border-radius:20px; padding:32px 28px;
+  max-width:320px; width:100%; text-align:center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+.vault-pin-icon{ font-size:36px; margin-bottom:12px; }
+.vault-pin-box h2{ font-size:18px; margin:0 0 6px; }
+.vault-pin-sub{ font-size:13px; color: var(--muted); margin:0 0 20px; }
+.vault-pin-dots{
+  display:flex; justify-content:center; gap:14px; margin-bottom:24px;
+}
+.vault-pin-dots span{
+  width:16px; height:16px; border-radius:50%;
+  background: var(--line); transition: background .15s;
+}
+.vault-pin-dots span.filled{ background: var(--navy); }
+[data-theme="dark"] .vault-pin-dots span.filled{ background: var(--teal); }
+.vault-pin-pad{
+  display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
+}
+.pin-key{
+  font-family:'Poppins',sans-serif; font-size:18px; font-weight:700;
+  background: var(--chip-bg); color: var(--ink);
+  border:1px solid var(--line); border-radius:12px;
+  padding:14px 0; cursor:pointer;
+  transition: background .12s, transform .1s;
+}
+.pin-key:hover{ background: var(--teal-soft); }
+.pin-key:active{ transform: scale(.94); }
+.pin-clear{ font-size:16px; }
+.pin-ok{
+  background: var(--navy); color: var(--on-accent); border-color: var(--navy);
+}
+.pin-ok:hover{ background: var(--navy-deep); }
+.vault-pin-error{
+  margin:12px 0 0; font-size:12.5px; font-weight:700;
+  color: var(--danger); animation: shake .3s ease;
+}
+.vault-pin-reset{
+  margin-top:14px; font-size:11.5px; font-weight:700;
+  background:none; border:none; color: var(--muted); cursor:pointer;
+  text-decoration:underline;
+}
+@keyframes shake{
+  0%,100%{ transform:translateX(0); }
+  25%{ transform:translateX(-6px); }
+  75%{ transform:translateX(6px); }
+}
+
 .vault-main{ max-width: 720px; margin:0 auto; padding: 24px 20px 60px; }
 
 .vault-form{

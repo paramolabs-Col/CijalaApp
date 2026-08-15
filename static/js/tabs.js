@@ -10,7 +10,8 @@ function activateTab(tab){
   const bb = document.getElementById('bb-' + tab);
   if (bb) bb.hidden = false;
   if (tab === 'ideas') loadIdeas();
-  if (tab === 'vault') loadVault();
+  if (tab === 'vault') onVaultTabActivated();
+  else if (typeof lockVault === 'function') lockVault();
   if (tab === 'templates') loadTemplates();
   try { localStorage.setItem('activeTab', tab); } catch (e) {}
 }

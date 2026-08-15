@@ -1,3 +1,124 @@
+/* ---------------- PIN del Baúl ---------------- */
+const PIN_KEY = 'vault_pin_hash';
+let vaultUnlocked = false;
+let pinBuffer = '';
+let pinState = 'unlock'; // 'unlock' | 'create' | 'confirm'
+let pinFirst  = '';
+let pinListenersAttached = false;
+
+function simpleHash(str){
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  return String(h);
+}
+
+function getSavedPin(){ try { return localStorage.getItem(PIN_KEY); } catch(e){ return null; } }
+function savePin(pin){ try { localStorage.setItem(PIN_KEY, simpleHash(pin)); } catch(e){} }
+function clearSavedPin(){ try { localStorage.removeItem(PIN_KEY); } catch(e){} }
+
+function setPinUI(title, sub, showReset){
+  document.getElementById('vaultPinTitle').textContent = title;
+  document.getElementById('vaultPinSub').textContent   = sub;
+  document.getElementById('vaultResetPin').hidden = !showReset;
+}
+
+function updatePinDots(){
+  document.querySelectorAll('#vaultPinDots span').forEach((s, i) => {
+    s.classList.toggle('filled', i < pinBuffer.length);
+  });
+}
+
+function pinError(msg){
+  const el = document.getElementById('vaultPinError');
+  el.textContent = msg; el.hidden = false;
+  el.style.animation = 'none';
+  requestAnimationFrame(() => { el.style.animation = 'shake .3s ease'; });
+  setTimeout(() => { el.hidden = true; }, 2500);
+}
+
+function unlockVault(){
+  vaultUnlocked = true;
+  pinBuffer = '';
+  document.getElementById('vaultPinScreen').hidden = true;
+  document.getElementById('vaultContent').hidden = false;
+  loadVault();
+}
+
+function lockVault(){
+  vaultUnlocked = false;
+  pinBuffer = ''; pinFirst = '';
+  pinState = getSavedPin() ? 'unlock' : 'create';
+  updatePinDots();
+  document.getElementById('vaultPinScreen').hidden = false;
+  document.getElementById('vaultContent').hidden = true;
+  document.getElementById('vaultPinError').hidden = true;
+  if (pinState === 'unlock'){
+    setPinUI('Ingresá tu PIN de 4 dígitos', 'El baúl está protegido. Ingresá el PIN para continuar.', true);
+  } else {
+    setPinUI('Creá tu PIN de 4 dígitos', 'Elegí un PIN para proteger el baúl.', false);
+  }
+}
+
+function handlePinOK(){
+  if (pinBuffer.length < 4){ pinError('Ingresá los 4 dígitos'); return; }
+
+  if (pinState === 'unlock'){
+    if (simpleHash(pinBuffer) === getSavedPin()){
+      unlockVault();
+    } else {
+      pinBuffer = ''; updatePinDots(); pinError('PIN incorrecto. Intentá de nuevo.');
+    }
+
+  } else if (pinState === 'create'){
+    pinFirst = pinBuffer;
+    pinBuffer = '';
+    pinState = 'confirm';
+    updatePinDots();
+    setPinUI('Confirmá tu PIN', 'Ingresá el mismo PIN para confirmar.', false);
+
+  } else if (pinState === 'confirm'){
+    if (pinBuffer === pinFirst){
+      savePin(pinBuffer);
+      unlockVault();
+    } else {
+      pinBuffer = ''; pinFirst = ''; pinState = 'create';
+      updatePinDots();
+      pinError('Los PINs no coinciden. Empezá de nuevo.');
+      setPinUI('Creá tu PIN de 4 dígitos', 'Elegí un PIN para proteger el baúl.', false);
+    }
+  }
+}
+
+function attachPinListeners(){
+  if (pinListenersAttached) return;
+  pinListenersAttached = true;
+
+  document.querySelectorAll('.pin-key').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.k;
+      if      (k === 'C' )  { pinBuffer = pinBuffer.slice(0, -1); }
+      else if (k === 'OK')  { handlePinOK(); return; }
+      else if (pinBuffer.length < 4){ pinBuffer += k; }
+      updatePinDots();
+    });
+  });
+
+  document.getElementById('vaultResetPin').addEventListener('click', () => {
+    if (!confirm('¿Borrar el PIN guardado? Tendrás que crear uno nuevo.')) return;
+    clearSavedPin();
+    pinBuffer = ''; pinFirst = ''; pinState = 'create';
+    updatePinDots();
+    setPinUI('Creá tu PIN de 4 dígitos', 'Elegí un PIN para proteger el baúl.', false);
+  });
+}
+
+/* Se llama desde tabs.js cuando se activa el tab vault */
+function onVaultTabActivated(){
+  lockVault();
+  attachPinListeners();
+}
+
+/* ---------------- Vault data ---------------- */
 let vaultEntries = [];
 const revealedPasswords = {};
 

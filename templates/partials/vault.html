@@ -7,7 +7,35 @@
     </div>
   </header>
 
-  <main class="vault-main">
+  <!-- Pantalla de PIN — se muestra hasta ingresar el código correcto -->
+  <div id="vaultPinScreen" class="vault-pin-screen">
+    <div class="vault-pin-box">
+      <div class="vault-pin-icon">🔒</div>
+      <h2 id="vaultPinTitle">Ingresá tu PIN de 4 dígitos</h2>
+      <p id="vaultPinSub" class="vault-pin-sub">El baúl está protegido. Ingresá el PIN para continuar.</p>
+      <div class="vault-pin-dots" id="vaultPinDots">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="vault-pin-pad">
+        <button class="pin-key" data-k="1">1</button>
+        <button class="pin-key" data-k="2">2</button>
+        <button class="pin-key" data-k="3">3</button>
+        <button class="pin-key" data-k="4">4</button>
+        <button class="pin-key" data-k="5">5</button>
+        <button class="pin-key" data-k="6">6</button>
+        <button class="pin-key" data-k="7">7</button>
+        <button class="pin-key" data-k="8">8</button>
+        <button class="pin-key" data-k="9">9</button>
+        <button class="pin-key pin-clear" data-k="C">⌫</button>
+        <button class="pin-key" data-k="0">0</button>
+        <button class="pin-key pin-ok" data-k="OK">OK</button>
+      </div>
+      <p id="vaultPinError" class="vault-pin-error" hidden></p>
+      <button id="vaultResetPin" class="vault-pin-reset" hidden>Olvidé mi PIN</button>
+    </div>
+  </div>
+
+  <main class="vault-main" id="vaultContent" hidden>
     <form id="vaultForm" class="vault-form">
       <div class="vault-form-row">
         <input id="vName" type="text" placeholder="Nombre (ej: Cuenta Gmail Páramo Labs)" required>

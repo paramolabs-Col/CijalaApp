@@ -38,7 +38,40 @@ function hexToRgba(hex, alpha){
 let campaigns = [];
 let currentCampaignId = null;
 let stateMap = {};
-let editingDraft = null; // clon editable de la campaña actual
+let editingDraft = null;
+let draftSaveTimer = null;
+
+function autosaveDraft(){
+  if (!editingDraft) return;
+  try {
+    localStorage.setItem('draft_' + editingDraft.id, JSON.stringify(editingDraft));
+    localStorage.setItem('draft_ts_' + editingDraft.id, Date.now());
+    const lbl = document.getElementById('draftStatus');
+    if (lbl){ lbl.textContent = '✓ Borrador guardado'; lbl.style.opacity='1'; setTimeout(()=>{ lbl.style.opacity='0.4'; }, 1500); }
+  } catch(e) {}
+}
+
+function scheduleDraftSave(){
+  clearTimeout(draftSaveTimer);
+  draftSaveTimer = setTimeout(autosaveDraft, 1000);
+}
+
+function clearDraft(id){
+  try { localStorage.removeItem('draft_' + id); localStorage.removeItem('draft_ts_' + id); } catch(e) {}
+}
+
+function getSavedDraft(id){
+  try { const raw = localStorage.getItem('draft_' + id); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
+}
+
+function draftAgeText(id){
+  try {
+    const ts = localStorage.getItem('draft_ts_' + id);
+    if (!ts) return '';
+    const mins = Math.round((Date.now() - parseInt(ts)) / 60000);
+    return mins < 1 ? 'hace menos de 1 min' : `hace ${mins} min`;
+  } catch(e) { return ''; }
+}
 
 function currentCampaign(){
   return campaigns.find(c => c.id === currentCampaignId);
@@ -275,6 +308,7 @@ document.getElementById("newCampaignForm").addEventListener("submit", async (e) 
   document.getElementById("newCampaignForm").reset();
   document.getElementById("newCampaignForm").hidden = true;
   await loadCampaigns(created.id);
+  enterEditMode(true);
 });
 
 document.getElementById("deleteCampaignBtn").addEventListener("click", async () => {
@@ -286,17 +320,25 @@ document.getElementById("deleteCampaignBtn").addEventListener("click", async () 
 });
 
 /* ---------------- Editor de campaña ---------------- */
-function enterEditMode(){
-  editingDraft = JSON.parse(JSON.stringify(currentCampaign()));
+function enterEditMode(isNew){
+  const base = JSON.parse(JSON.stringify(currentCampaign()));
+  const saved = getSavedDraft(base.id);
+  const age   = saved ? draftAgeText(base.id) : '';
+  if (saved && confirm(`Hay un borrador guardado (${age}).\n¿Querés recuperarlo?\n\nAceptar → recuperar borrador\nCancelar → empezar desde la versión del servidor`)){
+    editingDraft = saved;
+  } else {
+    editingDraft = base;
+  }
   document.getElementById("main").hidden = true;
   document.getElementById("dayDots").hidden = true;
   document.getElementById("campaignEditor").hidden = false;
   document.getElementById("editCampaignBtn").innerHTML = ICON_SAVE + "Guardar cambios";
   document.getElementById("editCampaignBtn").classList.add("primary");
-  renderEditor();
+  renderEditor(isNew);
 }
 
 function exitEditMode(){
+  if (editingDraft) clearDraft(editingDraft.id);
   editingDraft = null;
   document.getElementById("main").hidden = false;
   document.getElementById("dayDots").hidden = false;
@@ -305,9 +347,34 @@ function exitEditMode(){
   document.getElementById("editCampaignBtn").classList.remove("primary");
 }
 
-function renderEditor(){
+function renderEditor(showGuide){
   const wrap = document.getElementById("campaignEditor");
   wrap.innerHTML = "";
+
+  // Guide bar — se muestra cuando la campaña es nueva (sin tareas) o showGuide=true
+  const hasNoTasks = editingDraft.days.every(d => !d.tasks || d.tasks.length === 0);
+  if (showGuide || hasNoTasks){
+    const guide = document.createElement("div");
+    guide.className = "editor-guide";
+    guide.innerHTML = `
+      <div class="guide-steps">
+        <span class="guide-step"><strong>1.</strong> Elegí un día</span>
+        <span class="guide-sep">→</span>
+        <span class="guide-step"><strong>2.</strong> Usá <em>Desde plantilla</em> o <em>Aplicar combo</em></span>
+        <span class="guide-sep">→</span>
+        <span class="guide-step"><strong>3.</strong> Cuando termines → <em>Guardar cambios</em></span>
+      </div>
+      <button class="guide-close" onclick="this.closest('.editor-guide').remove()">✕</button>
+    `;
+    wrap.appendChild(guide);
+  }
+
+  // Status de borrador
+  const statusBar = document.createElement("div");
+  statusBar.id = "draftStatus";
+  statusBar.style.cssText = "font-size:11px;color:var(--muted);padding:4px 16px;opacity:0.4;transition:opacity .3s;";
+  statusBar.textContent = "Los cambios se guardan como borrador automáticamente";
+  wrap.appendChild(statusBar);
 
   const meta = document.createElement("div");
   meta.className = "panel-form";
@@ -369,12 +436,15 @@ function renderEditor(){
 
   wrap.querySelectorAll(".ed-date").forEach(inp => inp.addEventListener("change", (e) => {
     editingDraft.days[e.target.closest(".day-edit").dataset.idx].date = e.target.value;
+    scheduleDraftSave();
   }));
   wrap.querySelectorAll(".ed-fair").forEach(inp => inp.addEventListener("change", (e) => {
     editingDraft.days[e.target.closest(".day-edit").dataset.idx].fair = e.target.checked;
+    scheduleDraftSave();
   }));
   wrap.querySelectorAll(".ed-label").forEach(inp => inp.addEventListener("input", (e) => {
     editingDraft.days[e.target.closest(".day-edit").dataset.idx].label = e.target.value;
+    scheduleDraftSave();
   }));
   wrap.querySelectorAll(".ed-delday").forEach(btn => btn.addEventListener("click", (e) => {
     const idx = e.target.closest(".day-edit").dataset.idx;
@@ -434,16 +504,20 @@ function buildTaskEditRow(task, dayIdx, taskIdx){
 
   row.querySelector(".ed-time").addEventListener("input", (e) => {
     editingDraft.days[dayIdx].tasks[taskIdx].time = e.target.value;
+    scheduleDraftSave();
   });
   row.querySelector(".ed-tlabel").addEventListener("input", (e) => {
     editingDraft.days[dayIdx].tasks[taskIdx].label = e.target.value;
+    scheduleDraftSave();
   });
   row.querySelector(".ed-tdesc").addEventListener("input", (e) => {
     editingDraft.days[dayIdx].tasks[taskIdx].desc = e.target.value;
+    scheduleDraftSave();
   });
   row.querySelectorAll(".ed-platform").forEach(cb => cb.addEventListener("change", () => {
     const checked = [...row.querySelectorAll(".ed-platform:checked")].map(c => c.value);
     editingDraft.days[dayIdx].tasks[taskIdx].platform = checked;
+    scheduleDraftSave();
   }));
   row.querySelector(".ed-deltask").addEventListener("click", () => {
     editingDraft.days[dayIdx].tasks.splice(taskIdx, 1);
