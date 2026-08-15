@@ -239,18 +239,42 @@ footer{
 .user-bar{
   position: sticky; top:40px; z-index:60;
   background: var(--surface); border-bottom:1px solid var(--line);
-  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-  padding:12px 20px;
+  display:flex; align-items:center; gap:12px;
+  padding:10px 16px;
 }
+.bar-hamburger{
+  background:none; border:none; cursor:pointer;
+  color: var(--ink); padding:6px; border-radius:8px;
+  display:flex; align-items:center; flex-shrink:0;
+}
+.bar-hamburger:hover{ background: var(--chip-bg); }
 .user-identity{
   font-size:13.5px; font-weight:600; color: var(--ink); text-decoration:none;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .user-identity:hover{ text-decoration:underline; }
-.user-actions{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-.weather-widget{
-  font-size:12px; color: var(--muted); white-space:nowrap;
+.user-role{ font-weight:400; color: var(--muted); }
+
+/* ---------------- Weather card ---------------- */
+.weather-card{
+  margin-left:auto; flex-shrink:0;
+  display:flex; align-items:center; gap:10px;
   background: var(--chip-bg); border:1px solid var(--line);
-  border-radius:20px; padding:4px 10px;
+  border-radius:14px; padding:8px 14px 8px 10px;
+}
+.weather-icon-wrap{ font-size:36px; line-height:1; }
+.weather-info{ display:flex; flex-direction:column; }
+.weather-temp{
+  font-family:'Poppins',sans-serif; font-weight:800; font-size:17px;
+  color: var(--ink); line-height:1.1;
+}
+.weather-city{
+  font-size:10.5px; color: var(--muted); white-space:nowrap;
+}
+@media(max-width:480px){
+  .weather-city{ display:none; }
+  .weather-icon-wrap{ font-size:28px; }
+  .weather-temp{ font-size:14px; }
 }
 
 /* ---------------- Drawer settings section ---------------- */

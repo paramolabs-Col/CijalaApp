@@ -68,6 +68,7 @@ function closeDrawer(){
 }
 
 document.getElementById('hamburgerBtn').addEventListener('click', openDrawer);
+document.getElementById('hamburgerBtnBar').addEventListener('click', openDrawer);
 document.getElementById('navDrawerClose').addEventListener('click', closeDrawer);
 document.getElementById('navOverlay').addEventListener('click', (e) => {
   if (e.target === e.currentTarget) closeDrawer();

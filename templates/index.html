@@ -111,10 +111,21 @@
 </div>
 
 <div class="user-bar">
+  <button class="bar-hamburger" id="hamburgerBtnBar" aria-label="Menú">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+      <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
   <a class="user-identity" href="{{ url_for('auth.account') }}" title="Editar perfil">
-    <strong>{{ user_name }}</strong>{% if user_role %} · {{ user_role }}{% endif %}
+    <strong>{{ user_name }}</strong>{% if user_role %} · <span class="user-role">{{ user_role }}</span>{% endif %}
   </a>
-  <span id="weatherWidget" class="weather-widget"></span>
+  <div id="weatherCard" class="weather-card" hidden>
+    <div class="weather-icon-wrap" id="weatherIconEl"></div>
+    <div class="weather-info">
+      <span class="weather-temp" id="weatherTempEl"></span>
+      <span class="weather-city" id="weatherCityEl"></span>
+    </div>
+  </div>
 </div>
 
 {% include "partials/task_templates.html" %}

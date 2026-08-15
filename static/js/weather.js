@@ -1,6 +1,9 @@
 (async function(){
-  const el = document.getElementById('weatherWidget');
-  if (!el || !navigator.geolocation) return;
+  const card  = document.getElementById('weatherCard');
+  const icon  = document.getElementById('weatherIconEl');
+  const temp  = document.getElementById('weatherTempEl');
+  const city  = document.getElementById('weatherCityEl');
+  if (!card || !navigator.geolocation) return;
 
   function weatherEmoji(code){
     if (code === 0)  return '☀️';
@@ -28,13 +31,14 @@
     const wData = await wRes.json();
     const gData = await gRes.json();
 
-    const temp = Math.round(wData.current.temperature_2m);
+    const t    = Math.round(wData.current.temperature_2m);
     const code = wData.current.weather_code;
     const addr = gData.address || {};
-    const city = addr.city || addr.town || addr.village || addr.county || '';
+    const cityName = addr.city || addr.town || addr.village || addr.county || '';
 
-    el.textContent = `${weatherEmoji(code)} ${temp}°C${city ? ' · ' + city : ''}`;
-  } catch(e) {
-    el.textContent = '';
-  }
+    icon.textContent  = weatherEmoji(code);
+    temp.textContent  = `${t}°C`;
+    city.textContent  = cityName;
+    card.hidden = false;
+  } catch(e) {}
 })();
